@@ -212,16 +212,16 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 #region Add Metadata
 
 
-                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
-                {
-                    string titleXPath =
-                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
-                    string descriptionXpath =
-                        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
+                //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
+                //{
+                //    string titleXPath =
+                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Title/TitleType";
+                //    string descriptionXpath =
+                //        "Metadata/Metadata/MetadataType/Description/DescriptionType/Representation/MetadataDescriptionRepr/Details/DetailsType";
 
-                    ImportSchema("Basic ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
-                        titleXPath, descriptionXpath);
-                }
+                //    ImportSchema("Basic ABCD", "ABCD_2.06.XSD", "DataSet", entity.Name, entity.EntityType.FullName,
+                //        titleXPath, descriptionXpath);
+                //}
 
                 //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Full ABCD")))
                 //{
@@ -235,16 +235,28 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 //}
 
-                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
-                {
-                    string titleXPath = "Metadata/Basic/BasicType/title/titleType";
-                    string descriptionXpath = "Metadata/abstract/abstractType/para/paraType";
+                //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("GBIF")))
+                //{
+                //    string titleXPath = "Metadata/Basic/BasicType/title/titleType";
+                //    string descriptionXpath = "Metadata/abstract/abstractType/para/paraType";
 
-                    ImportSchema("GBIF", "eml.xsd", "Dataset", entity.Name, entity.EntityType.FullName, titleXPath,
-                        descriptionXpath);
+                //    ImportSchema("GBIF", "eml.xsd", "Dataset", entity.Name, entity.EntityType.FullName, titleXPath,
+                //        descriptionXpath);
+                //}
+
+                if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("New-BE-MetadataSchema")))
+                {
+                    string titleXPath =
+                        "Metadata/general/generalType/title/titleType";
+                    string descriptionXpath =
+                        "Metadata/general/generalType/abstract/abstractType";
+
+                    ImportSchema("New-BE-MetadataSchema", "schema_explos_bexis2.xsd", "metaProfile", entity.Name, entity.EntityType.FullName,
+                        titleXPath, descriptionXpath);
                 }
-                //if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic Eml")))
-                //    ImportSchema("Basic Eml", "eml-dataset.xsd", entity.Name, entity.Name, entity.EntityType.FullName);
+
+
+
 
                 #endregion Add Metadata
             }
