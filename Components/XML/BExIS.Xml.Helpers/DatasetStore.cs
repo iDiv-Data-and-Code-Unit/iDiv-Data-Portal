@@ -24,9 +24,9 @@ namespace BExIS.Xml.Helpers
 
 
             using (var uow = this.GetUnitOfWork())
+            using (DatasetManager dm = new DatasetManager())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-                DatasetManager dm = new DatasetManager();
-                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                 var entities = new List<EntityStoreItem>();
 
@@ -81,10 +81,6 @@ namespace BExIS.Xml.Helpers
                 {
                     throw ex;
                 }
-                finally
-                {
-                    dm.Dispose();
-                }
             }
         }
 
@@ -92,9 +88,11 @@ namespace BExIS.Xml.Helpers
         public int CountEntities()
         {
             using (var uow = this.GetUnitOfWork())
+            using (DatasetManager dm = new DatasetManager())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
-                DatasetManager dm = new DatasetManager();
-                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
+                
+                
                 XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
                 var entities = new List<EntityStoreItem>();
                 int count = 0;
@@ -140,6 +138,10 @@ namespace BExIS.Xml.Helpers
                     var dsv = dm.GetDatasetLatestVersion(id);
 
                     return dsv.Title;
+                }
+                catch
+                {
+                    return String.Empty;
                 }
                 finally
                 {
@@ -209,5 +211,24 @@ namespace BExIS.Xml.Helpers
             return true;
         }
 
+        public bool Exist(long id)
+        {
+            DatasetManager dm = new DatasetManager();
+            Dataset dataset = null;
+
+            try
+            {
+                dataset = dm.GetDataset(id);
+                return dataset!=null? true:false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            finally
+            {
+                dm.Dispose();
+            }
+        }
     }
 }

@@ -5,9 +5,12 @@ using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.Administration;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Services.DataStructure;
+using BExIS.Dlm.Services.MetadataStructure;
 using BExIS.Modules.Dcm.UI.Models;
 using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using BExIS.UI.Helpers;
 using BExIS.Utils.Data.Upload;
 using BExIS.Xml.Helpers;
 using System;
@@ -17,6 +20,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Xml;
+using Vaiona.Persistence.Api;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc;
@@ -46,6 +50,58 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public ActionResult UploadWizard(DataStructureType type, long datasetid = 0)
         {
+            // if dataset id is set it possible to check the entity
+            //get the researchobject (cuurently called dataset) to get the id of a metadata structure
+            Dataset researcobject = this.GetUnitOfWork().GetReadOnlyRepository<Dataset>().Get(datasetid);
+            string defaultAction = "Upload";
+            long entityId = datasetid;
+            if (researcobject != null)
+            {
+                long metadataStrutcureId = researcobject.MetadataStructure.Id;
+
+                using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
+                {
+                    string entityName = xmlDatasetHelper.GetEntityNameFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+                    string entityType = xmlDatasetHelper.GetEntityTypeFromMetadatStructure(metadataStrutcureId, metadataStructureManager);
+
+                    //ToDo in the entity table there must be the information
+                    using (EntityManager entityManager = new EntityManager())
+                    {
+                        var entity = entityManager.Entities.Where(e => e.Name.Equals(entityName)).FirstOrDefault();
+
+                        string moduleId = "";
+                        Tuple<string, string, string> action = null;
+
+                        if (entity != null && entity.Extra != null)
+                        {
+                            var node = entity.Extra.SelectSingleNode("extra/modules/module");
+
+                            if (node != null) moduleId = node.Attributes["value"].Value;
+
+                            string modus = "upload";
+
+                            action = EntityViewerHelper.GetEntityViewAction(entityName, moduleId, modus);
+                        }
+                        if (action == null) RedirectToAction(defaultAction, new { type, entityId });
+
+                        try
+                        {
+
+                            return RedirectToAction(action.Item3, action.Item2, new { area = action.Item1, type, entityId });
+                        }
+                        catch
+                        {
+                            return RedirectToAction(defaultAction, new { type, entityId });
+                        }
+                    }
+                }
+            }
+
+            return RedirectToAction(defaultAction, new { type, entityId });
+        }
+
+        public ActionResult Upload(DataStructureType type, long entityId = 0)
+        {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("Upload Data", Session.GetTenant());
 
             Session["TaskManager"] = null;
@@ -72,7 +128,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager = (TaskManager)Session["TaskManager"];
                     TaskManager.AddToBus(TaskManager.DATASTRUCTURE_TYPE, type);
 
-                    if(datasetid>0) TaskManager.AddToBus(TaskManager.DATASET_ID, datasetid);
+                    if(entityId > 0) TaskManager.AddToBus(TaskManager.DATASET_ID, entityId);
 
                     Session["TaskManager"] = TaskManager;
                 }
@@ -91,10 +147,10 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 Session["ResearchPlanViewList"] = LoadResearchPlanViewList();
 
                 // setparameters
-                SetParametersToTaskmanager(datasetid);
+                SetParametersToTaskmanager(entityId);
             }
 
-            return View((TaskManager)Session["TaskManager"]);
+            return View("UploadWizard",(TaskManager)Session["TaskManager"]);
         }
 
         #region UploadNavigation
@@ -250,17 +306,19 @@ namespace BExIS.Modules.Dcm.UI.Controllers
 
         public List<ListViewItem> LoadResearchPlanViewList()
         {
-            ResearchPlanManager rpm = new ResearchPlanManager();
-            List<ListViewItem> temp = new List<ListViewItem>();
-
-            foreach (ResearchPlan researchPlan in rpm.Repo.Get())
+            using (ResearchPlanManager rpm = new ResearchPlanManager())
             {
-                string title = researchPlan.Title;
+                List<ListViewItem> temp = new List<ListViewItem>();
 
-                temp.Add(new ListViewItem(researchPlan.Id, title));
+                foreach (ResearchPlan researchPlan in rpm.Repo.Get())
+                {
+                    string title = researchPlan.Title;
+
+                    temp.Add(new ListViewItem(researchPlan.Id, title));
+                }
+
+                return temp.OrderBy(p => p.Title).ToList();
             }
-
-            return temp.OrderBy(p => p.Title).ToList();
         }
 
         private void SetParametersToTaskmanager(long datasetId)
@@ -280,16 +338,18 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     TaskManager.AddToBus(TaskManager.DATASET_ID, datasetid);
 
                     // get title
-                    DatasetManager dm = new DatasetManager();
-                    string title = "";
-                    // is checkedIn?
-                    if (dm.IsDatasetCheckedIn(datasetid))
+                    using (DatasetManager dm = new DatasetManager())
                     {
-                        var dsv = dm.GetDatasetLatestVersion(datasetid);
-                        title = dsv.Title;
-                    }
+                        string title = "";
+                        // is checkedIn?
+                        if (dm.IsDatasetCheckedIn(datasetid))
+                        {
+                            var dsv = dm.GetDatasetLatestVersion(datasetid);
+                            title = dsv.Title;
+                        }
 
-                    TaskManager.AddToBus(TaskManager.DATASET_TITLE, title);
+                        TaskManager.AddToBus(TaskManager.DATASET_TITLE, title);
+                    }
                 }
                 catch (Exception ex)
                 {

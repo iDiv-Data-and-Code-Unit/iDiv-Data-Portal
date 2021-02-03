@@ -20,6 +20,7 @@
             controller="admin" action="index"
             extends="./settingsRoot"
             />
+    <Export tag="lunchbar" id="helpDim" order="5"
     
     <Export tag="settings" id="doiRequests" order="1"
         title="DOI Requests" description="Manage DOI requests" icon=""
