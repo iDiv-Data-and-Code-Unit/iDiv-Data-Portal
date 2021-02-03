@@ -42,6 +42,14 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BExISDOIClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DataCiteDOI\BexisDOIClient\BExISDOIClient.dll</HintPath>
+    </Reference>
+    <Reference Include="DOIModel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DataCiteDOI\BexisDOIClient\DOIModel.dll</HintPath>
+    </Reference>
     <Reference Include="Ionic.Zip">
       <HintPath>..\..\..\Libraries\Ionic.Zip.dll</HintPath>
     </Reference>
@@ -49,6 +57,7 @@
       <HintPath>..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -69,8 +78,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Vaiona.Persistence.Api, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\..\BEXIS2GIT\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
+    <Reference Include="Vaiona.Persistence.Api">
+      <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Persistence.Api.dll</HintPath>
     </Reference>
     <Reference Include="Vaiona.Utils">
       <HintPath>..\..\..\Libraries\Vaiona\Vaiona.Utils.dll</HintPath>
@@ -79,6 +88,7 @@
   <ItemGroup>
     <Compile Include="Api\ApiHelper.cs" />
     <Compile Include="BasicWebService.cs" />
+    <Compile Include="DataCiteDOI\DataCiteDoiHelper.cs" />
     <Compile Include="Export\PangaeaDataRepoConverter.cs" />
     <Compile Include="Export\GenericDataRepoConverter.cs" />
     <Compile Include="Export\IDataRepoConverter.cs" />
@@ -136,7 +146,10 @@
       <Name>BExIS.Dim.Services</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="DataCiteDOI\BexisDOIClient\BExISDOIClient.dll" />
+    <Content Include="DataCiteDOI\BexisDOIClient\DOIModel.dll" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
