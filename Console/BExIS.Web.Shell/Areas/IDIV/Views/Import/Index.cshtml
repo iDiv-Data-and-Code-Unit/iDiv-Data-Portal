@@ -1,0 +1,34 @@
+﻿@model List<Dictionary<string, string>>
+
+<table>
+    <tr>
+        <td>
+            Number of publications
+        </td>
+        <td>
+            @Model.Count()
+        </td>
+    </tr>
+    @foreach (Dictionary<string, string> d in Model)
+    {
+        <tr>
+            <th>
+                @d["Record Number"]
+            </th>
+            <th>
+                @d["Title"]
+            </th>
+        </tr>
+        foreach (KeyValuePair<string, string> kvp in d)
+        {
+            <tr>
+                <td>
+                    @kvp.Key
+                </td>
+                <td>
+                    @kvp.Value
+                </td>
+            </tr>
+        }
+    }
+</table>
