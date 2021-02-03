@@ -112,6 +112,46 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #endregion create entities
 
+                #region create entities pubs
+                // Entities
+                Entity entity2 = entityManager.Entities.Where(e => e.Name.ToUpperInvariant() == "Publication".ToUpperInvariant()).FirstOrDefault();
+
+                if (entity2 == null)
+                {
+                    entity2 = new Entity();
+                    entity2.Name = "Publication";
+                    entity2.EntityType = typeof(Dataset);
+                    entity2.EntityStoreType = typeof(Xml.Helpers.DatasetStore);
+                    entity2.UseMetadata = true;
+                    entity2.Securable = true;
+
+                    //add to Extra
+
+                    XmlDocument xmlDoc = new XmlDocument();
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    entity2.Extra = xmlDoc;
+
+                    entityManager.Create(entity2);
+                }
+                else
+                {
+                    XmlDocument xmlDoc = new XmlDocument();
+
+                    if (entity.Extra != null) xmlDoc.AppendChild(entity.Extra);
+
+                    //update to Extra
+                    XmlDatasetHelper xmlDatasetHelper = new XmlDatasetHelper();
+                    xmlDatasetHelper.AddReferenceToXml(xmlDoc, AttributeNames.name.ToString(), "ddm", AttributeType.parameter.ToString(), "extra/modules/module");
+
+                    entity.Extra = xmlDoc;
+
+                    entityManager.Update(entity);
+                }
+
+                #endregion create entities pub
+
                 #region SECURITY
 
                 //workflows = größere sachen, vielen operation
