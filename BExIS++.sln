@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.421
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30503.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{A24A6801-2ECC-4F47-8284-8C93277D3030}"
 EndProject
@@ -144,6 +144,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Xml.Helpers.UnitTests", "Components\XML\BExIS.Xml.Helpers.UnitTests\BExIS.Xml.Helpers.UnitTests.csproj", "{64F809C2-48F4-47FA-840C-6EFB046D3A6A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BExIS.Security.Services.Tests", "Components\AAA\BExIS.Security.Services.Tests\BExIS.Security.Services.Tests.csproj", "{F6638B42-1D60-4925-AE87-FDB80C03DBAC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IDIV", "IDIV", "{4F3E32A0-5953-46DE-A4EC-F2E205607381}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDIV.Modules.Idiv.UI", "Console\BExIS.Web.Shell\Areas\IDIV\IDIV.Modules.Idiv.UI.csproj", "{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDIV.API.Metadata", "Modules\IDIV\IDIV.API.Metadata\IDIV.API.Metadata.csproj", "{DFFF99E2-A110-407B-85DA-227B4CCD2E11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1007,6 +1013,42 @@ Global
 		{F6638B42-1D60-4925-AE87-FDB80C03DBAC}.TestServerRelease|Mixed Platforms.Build.0 = Release|Any CPU
 		{F6638B42-1D60-4925-AE87-FDB80C03DBAC}.TestServerRelease|x86.ActiveCfg = Release|Any CPU
 		{F6638B42-1D60-4925-AE87-FDB80C03DBAC}.TestServerRelease|x86.Build.0 = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Debug|x86.Build.0 = Debug|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Release|x86.ActiveCfg = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.Release|x86.Build.0 = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.TestServerRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.TestServerRelease|Any CPU.Build.0 = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.TestServerRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.TestServerRelease|Mixed Platforms.Build.0 = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.TestServerRelease|x86.ActiveCfg = Release|Any CPU
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26}.TestServerRelease|x86.Build.0 = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Debug|x86.Build.0 = Debug|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Release|x86.ActiveCfg = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.Release|x86.Build.0 = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.TestServerRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.TestServerRelease|Any CPU.Build.0 = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.TestServerRelease|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.TestServerRelease|Mixed Platforms.Build.0 = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.TestServerRelease|x86.ActiveCfg = Release|Any CPU
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11}.TestServerRelease|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1077,10 +1119,13 @@ Global
 		{44DD2A5E-0D2F-4FAB-B297-4211441030B7} = {6C18F986-A56C-4366-88A4-7046E8901929}
 		{64F809C2-48F4-47FA-840C-6EFB046D3A6A} = {36639C81-78C6-4C77-B856-41B8291942DA}
 		{F6638B42-1D60-4925-AE87-FDB80C03DBAC} = {946EB891-B5C8-4E03-B953-69583E886E57}
+		{4F3E32A0-5953-46DE-A4EC-F2E205607381} = {692AFF14-3A57-47D8-912F-093EC8F561C4}
+		{95EA7A1A-CD79-41E1-80CD-83C3A2A29F26} = {4F3E32A0-5953-46DE-A4EC-F2E205607381}
+		{DFFF99E2-A110-407B-85DA-227B4CCD2E11} = {4F3E32A0-5953-46DE-A4EC-F2E205607381}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 		SolutionGuid = {9B6E4921-8EBA-487D-A098-3E473A0EAC64}
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True

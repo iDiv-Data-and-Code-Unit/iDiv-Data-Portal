@@ -1,0 +1,225 @@
+/*
+ For css overrides needed for customizations.
+ By having this separate file for css overrides, it should be easier to backup and restore customizations.
+ If some organization want to style the IPT to their own branding and they want to support more backward compatibility
+ they can create their own modernizr.js with the desired supported elements. They only have to replace the 'default'
+ file with their own.
+*/
+
+/* General style */
+
+#page{
+  margin: 62px 0px 0px 0px;
+  width: 100%;
+}
+
+    #page .headline p,
+    #page .wow p {
+        line-height: 1.3em;
+    }
+
+a {
+ 
+}
+
+/***************************************
+Customized Bootstrap Template
+/***************************************
+
+
+/* GENERAL STUFF */
+html {
+    font-size: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+body {
+    font-size: 16px;
+    line-height: 1.5;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #333;
+}
+
+
+input:focus, button:focus{
+  outline: 0 !important; 
+}
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; 
+}
+.header-main-banner img {
+    display: inline-block;
+    /*max-width: 100%;*/
+    height: auto;
+    vertical-align: middle;
+    width: 100%;
+}
+a:hover,
+a:focus,
+a:active {
+  text-decoration: none;
+  outline: none; 
+}
+#main {
+  position: relative;
+  z-index: 100; 
+}
+
+.text-center {
+    text-align: justify;
+}
+
+.options {
+	margin-top:40px;
+	
+}
+
+.headline h3 {
+    position: relative;
+    color: #337ab7;
+    font-size: 2.375rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+    .headline h3::after {
+        content: "";
+        width: 50px;
+        height: 5px;
+        position: absolute;
+        left: 50%;
+        bottom: 10px;
+        background: #337ab7;
+        -webkit-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+        transform: translateX(-50%);
+        -webkit-transition: all 0.2s ease-in-out;
+        -o-transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out;
+    }
+
+/* Make h3::after huge when hover */
+
+section:hover .headline h3::after {
+  width: 150px; 
+}
+
+
+
+#header-main {
+  position: relative;
+  overflow: hidden; 
+}
+
+.header-main-banner img {
+    width:100%;
+    height:400px;
+}
+
+.header-main-img,
+.header-main-banner,
+.header-main-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;    
+}
+
+.header-main-img {
+  background-size: cover;
+  background-position: 50% 50%;
+  background-attachment: fixed; 
+}
+
+video{
+  width:100%;
+}
+
+
+
+
+/* TOP-MAIN SECTION */
+
+.top-main {
+  padding: 20px 0 60px; 
+}
+.top-main-info {
+  max-width: 500px;
+  color: white;
+  padding-top: 10px; 
+}
+.top-main-info h2 {
+  font-size: 45px;
+  font-weight: 700;
+  /*text-transform: uppercase;*/
+  line-height: 55px; 
+}
+.top-main-info p {
+  padding: 20px 0 35px; 
+}
+.top-main-img {
+  max-width: 600px;
+}
+.top-main-img img, .faq-img img {
+ -webkit-filter: drop-shadow(0px 8px 15px #fff);
+  filter: drop-shadow(0px 8px 15px #fff);
+}
+
+
+.btn-info {
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
+    margin-right: 10px;
+    background-color: #337ab7;
+    border-color: #337ab7;
+}
+
+    .btn-info:hover {
+        background-color: #23527c;
+        border-color: #23527c;
+    }
+
+
+/* ABOUT SECTION */
+
+.section-padding {
+  padding: 5% 0; 
+      margin-left: 50px;
+    margin-right: 50px;
+}
+}
+.about {
+  padding: 70px;
+  border-radius: 2px;
+  text-align: center;
+  -webkit-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out; 
+}
+.about img {
+  max-width: 60px; 
+}
+.about h2 {
+  font-size: 1.25rem;
+  padding: 15px 0; 
+}
+.about p {
+  max-width: 300px;
+  font-size: 0.875rem;
+  margin: 0 auto; 
+}
+.about:hover {
+  -webkit-box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+  -webkit-transform: translateY(-5px);
+  -ms-transform: translateY(-5px);
+  transform: translateY(-5px); 
+}
+
+
+
+

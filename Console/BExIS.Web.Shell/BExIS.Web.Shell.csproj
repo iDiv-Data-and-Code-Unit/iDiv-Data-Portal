@@ -595,6 +595,8 @@
     <Content Include="Content\handsontable\handsontable.full.css" />
     <Content Include="Content\handsontable\handsontable.full.min.css" />
     <Content Include="Content\handsontable\handsontable.min.css" />
+    <Content Include="Content\Images\banner2.jpg" />
+    <Content Include="Content\Images\banner3.jpg" />
     <Content Include="Content\Images\dfg_logo.gif" />
     <Content Include="Content\bootstrap-combobox.css" />
     <Content Include="Content\bootstrap.css" />
@@ -605,7 +607,10 @@
     <Content Include="Content\Images\Bildmarke_BEXIS_rgb_94x94.png" />
     <Content Include="Content\Images\2.svg" />
     <Content Include="Content\Images\favicon.ico" />
+    <Content Include="Content\Images\iBDP_logo.png" />
+    <Content Include="Content\Images\idiv_logo.png" />
     <Content Include="Content\Images\info.png" />
+    <Content Include="Content\Images\logo.png" />
     <Content Include="Content\Images\Logo_BEXIS_cmyk.svg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_113x28.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_2600x830.jpg" />
@@ -613,8 +618,10 @@
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.jpg" />
     <Content Include="Content\Images\Logo_BEXIS_rgb_377x94.png" />
     <Content Include="Content\Images\Bad.png" />
+    <Content Include="Content\Images\topRainbow.jpg" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\bootstrap-slider.min.css" />
+    <Content Include="css\custom.css" />
     <Content Include="css\font-awesome.css" />
     <Content Include="css\font-awesome.min.css" />
     <Content Include="fonts\fontawesome-webfont.svg" />
@@ -649,6 +656,7 @@
     <Content Include="Content\DataTables\extensions\RowReorder\css\semanticui.scss" />
     <Content Include="Content\DataTables\extensions\Buttons\css\mixins.scss" />
     <Content Include="Content\DataTables\extensions\Buttons\css\common.scss" />
+    <Content Include="Scripts\custom.css" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\js\autoFill.bootstrap.js" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\js\autoFill.bootstrap.min.js" />
     <Content Include="Scripts\DataTables\extensions\AutoFill\js\autoFill.bootstrap4.js" />

@@ -21,19 +21,19 @@
             extends="./settingsRoot" />
 
     <Export tag="menubar" id="collect" order="1"
-            title="Collect" description="Quick access to Data Collection Area" icon=""
+            title="Submit Data" description="Submit Data" icon=""
             controller="" action=""
             extends="./menubarRoot" />
-    <Export tag="menubar" id="createDataset" order="1"
-            title="Create Dataset" description="Create new Dataset" icon=""
+    <Export tag="menubar" id="createDataset" order="2"
+            title="File" description="Create new Dataset" icon=""
             controller="CreateDataset" action="index"
             extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="uploaddata" order="2"
-            title="Upload Data" description="Upload data to a dataset" icon=""
+    <Export tag="menubar" id="uploaddata" order="3"
+            title="Update Dataset" description="Upload data to a dataset" icon=""
             controller="Submit" action="index"
             extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="importdata" order="3"
-            title="Import Data" description="Import datastructure and data from an excel file" icon=""
+    <Export tag="menubar" id="importdata" order="1"
+            title="Tabular" description="Import datastructure and data from an excel file" icon=""
             controller="EasyUpload" action="index"
             extends="./menubarRoot/collect" />
     <Export tag="menubar" id="createDataset" order="4"
