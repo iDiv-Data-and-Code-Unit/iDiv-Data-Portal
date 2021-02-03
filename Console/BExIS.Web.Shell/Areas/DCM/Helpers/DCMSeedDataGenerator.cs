@@ -30,6 +30,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             EntityManager entityManager = new EntityManager();
             FeatureManager featureManager = new FeatureManager();
             OperationManager operationManager = new OperationManager();
+            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
             try
             {
@@ -250,7 +251,6 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                 #region Add Metadata
 
-                MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
 
                 if (!metadataStructureManager.Repo.Get().Any(m => m.Name.Equals("Basic ABCD")))
                 {
@@ -300,6 +300,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                 entityManager.Dispose();
                 featureManager.Dispose();
                 operationManager.Dispose();
+                metadataStructureManager.Dispose();
             }
         }
 
