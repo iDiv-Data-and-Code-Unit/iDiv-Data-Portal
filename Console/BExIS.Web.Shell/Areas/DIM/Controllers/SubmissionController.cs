@@ -469,7 +469,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                             new DataCiteDoiHelper().sendRequest(datasetVersion, datasetUrl);
 
                             string title = xmlDatasetHelper.GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                            publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, datasetUrl, "under review", "");
+                            publicationManager.CreatePublication(datasetVersion, broker, repository, title, 0, zipfilepath, datasetUrl, "under review");
                         }
                         #endregion datacite
                     }
