@@ -26,7 +26,7 @@ namespace BExIS.Dim.Helpers
             string doi = doiClient.getDoi(doiProvider, testmode, testmode, "DS" + datasetVersion.Dataset.Id + "VN" + versionNo + "DV" + datasetVersion.Id, token);
             string url = datasetUrl + "?version=" + versionNo;
 
-          /* if (testmode)
+           if (testmode)
             {
                 postMetadata(datasetVersion, doiClient, doiProvider, doi, versionNo, token, testmode);
                 Thread.Sleep(5000);
@@ -38,7 +38,7 @@ namespace BExIS.Dim.Helpers
                 Thread.Sleep(5000);
                 postMetadata(datasetVersion, doiClient, doiProvider, doi, versionNo, token, testmode);
             }
-            */
+            
             return doi;
         }
         private string postMetadata(DatasetVersion datasetVersion, BExISDOIClient.BExISDOIClient doiClient, string doiProvider, string doi, long versionNo, string token, bool testmode = true)
