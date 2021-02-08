@@ -5,19 +5,21 @@
 <tr id="@Model.DatasetVersionId" class="doi-row">
     <td>@Model.Broker.Name</td>
     <td>@Model.DataRepo</td>
-    @if (!String.IsNullOrEmpty(Model.Doi))
+    @if (!String.IsNullOrEmpty(Model.ExternalLink))
     {
-        string doiLink = "https://doi.org/" + Model.Doi;
+        string doiLink = "https://doi.org/" + Model.ExternalLink;
         <td>
-            <a href="@doiLink">@Model.Doi</a>
+            <a href="@doiLink">@Model.ExternalLink</a>
         </td>
     }
     else
     {
         <td></td>
     }
-    <td>
-        <a href="@Model.ExternalLink" target="_blank">@Model.ExternalLink</a>
+<td>
+
+    @Html.ActionLink(@Model.DatasetId.ToString() + "(v" + @Model.DatasetVersionNr.ToString() + " " + @Model.DatasetVersionId.ToString() + ")", "Show", "Data", new { Area = "DDM", id = @Model.DatasetId, version = @Model.DatasetVersionNr }, null)
+</td>
     </td>
     <td>@Model.CreationDate</td>
     <td>@Model.Status</td>

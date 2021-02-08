@@ -448,7 +448,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     }
 
 
-                    if (datarepo.ToLower().Equals("doi"))
+                    if (datarepo.ToLower().Equals("externallink"))
                     {
                         #region datacite
 

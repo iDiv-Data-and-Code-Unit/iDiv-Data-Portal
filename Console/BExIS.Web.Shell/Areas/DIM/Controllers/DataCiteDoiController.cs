@@ -27,10 +27,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
         public ActionResult index()
         {
             List<PublicationModel> model = new List<PublicationModel>();
-            PublicationManager publicationManager = null;
-            try
+
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (PublicationManager publicationManager = new PublicationManager())
             {
-                publicationManager = new PublicationManager();
+                
                 Broker broker = publicationManager.RepositoryRepo.Get().Where(b => b.Name.ToLower().Equals(ConfigurationManager.AppSettings["doiProvider"].ToLower())).FirstOrDefault().Broker;
                 List<Publication> publications = publicationManager.GetPublication().Where(p => p.Broker.Name.ToLower().Equals(broker.Name.ToLower())).ToList();
 
@@ -44,14 +45,11 @@ namespace BExIS.Modules.Dim.UI.Controllers
                         CreationDate = p.Timestamp,
                         ExternalLink = p.ExternalLink,
                         FilePath = p.FilePath,
-                        Status = p.Status
-                       // Doi = p.Doi
+                        Status = p.Status,
+                        DatasetId = p.DatasetVersion.Dataset.Id,
+                        DatasetVersionNr = datasetManager.GetDatasetVersionNr(p.DatasetVersion.Id)
                     });
                 }
-            }
-            finally
-            {
-                publicationManager.Dispose();
             }
 
             return View(model);
@@ -59,25 +57,26 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
         public ActionResult _grantDoi(long datasetVersionId)
         {
-            PublicationManager publicationManager = null;
-            DatasetManager datasetManager = null;
-            EntityPermissionManager entityPermissionManager = null;
-            EntityManager entityManager = null;
 
-            try
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (PublicationManager publicationManager = new PublicationManager())
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (EntityManager entityManager = new EntityManager())
             {
-                datasetManager = new DatasetManager();
+               
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
+
                 long versionNo = datasetManager.GetDatasetVersions(datasetVersion.Dataset.Id).OrderBy(d => d.Timestamp).Count();
 
-                publicationManager = new PublicationManager();
                 Publication publication = publicationManager.GetPublication().Where(p => p.DatasetVersion.Id.Equals(datasetVersion.Id)).FirstOrDefault();
+
+                DatasetVersion latestDatasetVersion = datasetManager.GetDatasetLatestVersion(datasetVersion.Dataset.Id);
 
                 string datasetUrl = new Uri(new Uri(Request.Url.GetLeftPart(UriPartial.Authority)), Url.Content("~/ddm/Data/ShowData/" + datasetVersion.Dataset.Id).ToString()).ToString();
                 
-                string doi = new DataCiteDoiHelper().issueDoi(datasetVersion, datasetUrl, versionNo);
+                string doi = new DataCiteDoiHelper().issueDoi(latestDatasetVersion, datasetUrl, versionNo);
 
-                publication.DatasetVersion = datasetVersion;
+                publication.DatasetVersion = latestDatasetVersion;
               //  publication.Doi = doi;
                 publication.ExternalLink = doi;
                 publication.Status = "DOI Registered";
@@ -86,13 +85,13 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 EmailService es = new EmailService();
                 List<string> tmp = null;
-                string title = new XmlDatasetHelper().GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                string subject = "DOI Request for Dataset " + title + "(" + datasetVersion.Dataset.Id + ")";
-                string body = "<p>DOI reqested for dataset <a href=\"" + datasetUrl + "\">" + title + "(" + datasetVersion.Dataset.Id + ")</a>, was granted by the Datamanager.</p>" +
+                string title = new XmlDatasetHelper().GetInformationFromVersion(latestDatasetVersion.Id, NameAttributeValues.title);
+                string subject = "DOI Request for Dataset " + title + "(" + latestDatasetVersion.Dataset.Id + ")";
+                string body = "<p>DOI reqested for dataset <a href=\"" + datasetUrl + "\">" + title + "(" + latestDatasetVersion.Dataset.Id + ")</a>, was granted by the Datamanager.</p>" +
                     "<p>The doi is<a href=\"https://doi.org/"+ doi +"\">" + doi + "</a></p>";
 
                 tmp = new List<string>();
-                tmp = MappingUtils.GetValuesFromMetadata((int)Key.Email, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
+                tmp = MappingUtils.GetValuesFromMetadata((int)Key.Email, LinkElementType.Key, latestDatasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(latestDatasetVersion.Metadata));
 
                 foreach (string s in tmp)
                 {
@@ -100,8 +99,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     es.Send(subject, body, e);
                 }
 
-                entityPermissionManager = new EntityPermissionManager();
-                entityManager = new EntityManager();
                 long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).FirstOrDefault().Id;
 
                 EntityPermission entityPermission = entityPermissionManager.Find(null, entityId, datasetVersion.Dataset.Id);
@@ -129,30 +126,20 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     CreationDate = publication.Timestamp,
                     ExternalLink = publication.ExternalLink,
                     FilePath = publication.FilePath,
-                    Status = publication.Status
-                    //Doi = publication.Doi
+                    Status = publication.Status,
+                    DatasetId = publication.DatasetVersion.Dataset.Id,
+                    DatasetVersionNr = datasetManager.GetDatasetVersionNr(publication.DatasetVersion.Id)
                 });
-            }
-            finally
-            {
-                publicationManager.Dispose();
-                datasetManager.Dispose();
-                entityPermissionManager.Dispose();
-                entityManager.Dispose();
             }
         }
 
         public ActionResult _denyDoi(long datasetVersionId)
         {
-            PublicationManager publicationManager = null;
-            DatasetManager datasetManager = null;
-
-            try
+            using (DatasetManager datasetManager = new DatasetManager())
+            using (PublicationManager publicationManager = new PublicationManager())
             {
-                datasetManager = new DatasetManager();
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
-                publicationManager = new PublicationManager();
                 Publication publication = publicationManager.GetPublication().Where(p => p.DatasetVersion.Id.Equals(datasetVersion.Id)).FirstOrDefault();
 
                 publication.Status = "DOI Denied";
@@ -182,15 +169,12 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     CreationDate = publication.Timestamp,
                     ExternalLink = publication.ExternalLink,
                     FilePath = publication.FilePath,
-                    Status = publication.Status
-                    //Doi = publication.Doi
+                    Status = publication.Status,
+                    DatasetId = publication.DatasetVersion.Dataset.Id,
+                    DatasetVersionNr = datasetManager.GetDatasetVersionNr(publication.DatasetVersion.Id)
                 });
             }
-            finally
-            {
-                publicationManager.Dispose();
-                datasetManager.Dispose();
-            }
+
         }
     }
 }
