@@ -24,11 +24,11 @@
             <h3>@item.Value</h3>
             <ul>
 
-                <li><a class="show" entity="@item.Value.ToLower()">My @{@item.Value}s</a></li>
+                <li><a class="show" entity="@item.Value.ToLower()">@{@item.Value}s</a></li>
                 @if (@item.Value == "Dataset")
                 {
-                    <li><a entityid="@item.Key" class="request">My Requests</a></li>
-                    <li><a entityid="@item.Key" class="decision">Decisions</a></li>
+                  <!--  <li><a entityid="@item.Key" class="request">My Requests</a></li>
+                    <li><a entityid="@item.Key" class="decision">Decisions</a></li>--> // hide as not in not in use
                 }
             </ul>
 
