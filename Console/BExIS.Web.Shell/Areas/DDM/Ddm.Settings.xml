@@ -9,6 +9,6 @@
   <entry key="show_publish_tab" value="true" type="String"/>
   <entry key="show_attachments_tab" value="true" type="String"/>
   
-  <entry key="show_tabs_deactivated" value="true" type="String"/>
+  <entry key="show_tabs_deactivated" value="false" type="String"/>
     
 </settings>
