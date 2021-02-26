@@ -91,13 +91,23 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     "<p>The doi is<a href=\"https://doi.org/"+ doi +"\">" + doi + "</a></p>";
 
                 tmp = new List<string>();
+                List<string> emails = new List<string>();
                 tmp = MappingUtils.GetValuesFromMetadata((int)Key.Email, LinkElementType.Key, latestDatasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(latestDatasetVersion.Metadata));
 
                 foreach (string s in tmp)
                 {
-                    string e = s.Trim();
-                    es.Send(subject, body, e);
+                    var email = s.Split(' ');
+                    foreach (var mail in email)
+                    {
+                        if (emails == null || !emails.Contains(mail))
+                        {
+                            emails.Add(mail);
+                        }
+                    }
+
                 }
+                es.Send(subject, body, emails);
+                es.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
 
                 long entityId = entityManager.Entities.Where(e => e.Name.ToLower().Equals("dataset")).FirstOrDefault().Id;
 

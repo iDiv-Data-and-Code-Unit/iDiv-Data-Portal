@@ -180,6 +180,7 @@ namespace BExIS.Dim.Helpers
         {
             EmailService es = new EmailService();
             List<string> tmp = null;
+            List<string> emails = new List<string>();
             string title = new XmlDatasetHelper().GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
             string subject = "DOI Request for Dataset " + title + "(" + datasetVersion.Dataset.Id + ")";
             string body = "<p>A DOI was reqested for dataset <a href=\"" + datasetUrl + "\">" + title + "(" + datasetVersion.Dataset.Id + ")</a>, by " + HttpContext.Current.User.Identity.Name + ".</p>";
@@ -187,11 +188,21 @@ namespace BExIS.Dim.Helpers
             tmp = new List<string>();
             tmp = MappingUtils.GetValuesFromMetadata((int)Key.Email, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
 
+
             foreach (string s in tmp)
             {
-                string e = s.Trim();
-                es.Send(subject, body, e);
+                var email = s.Split(' ');
+                foreach (var mail in email)
+                {
+                    if (emails == null || !emails.Contains(mail))
+                    {
+                        emails.Add(mail);
+                    }
+                }
+                
             }
+            es.Send(subject, body, emails);
+
             es.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
         }
     }   
