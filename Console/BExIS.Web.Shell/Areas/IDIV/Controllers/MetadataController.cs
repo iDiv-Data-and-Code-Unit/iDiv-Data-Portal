@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Xml;
-
 using MvcContrib.ActionResults;
 using IDIV.API.Metadata;
-using System.Xml;
 using BExIS.Dlm.Services.Data;
 using BExIS.Dlm.Entities.Data;
-using BExIS.Ddm.Providers.LuceneProvider;
 using BExIS.Ddm.Api;
-//using BExIS.Ddm.Model;
 using Vaiona.IoC;
 using System.Data;
 using BExIS.Utils.Models;

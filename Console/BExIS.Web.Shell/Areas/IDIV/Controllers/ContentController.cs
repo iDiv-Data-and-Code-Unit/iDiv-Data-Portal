@@ -7,6 +7,11 @@ using Vaiona.Web.Mvc.Models;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using Vaiona.Web.Extensions;
+using System.IO;
+using System.Web;
+using BExIS.IO;
+using Vaiona.Utils.Cfg;
+using BExIS.Ddm.Providers.LuceneProvider.Helpers;
 
 namespace IDIV.Modules.Idiv.UI.Controllers
 {
@@ -24,10 +29,73 @@ namespace IDIV.Modules.Idiv.UI.Controllers
             return View();
         }
 
+        public ActionResult QuickGuide()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Quick Guide", this.Session.GetTenant());
+            return View();
+        }
+
+        public FileResult getFile(string path)
+        {
+            path = Server.UrlDecode(path);
+            if (BExIS.IO.FileHelper.FileExist(Path.Combine(AppConfiguration.GetModuleWorkspacePath("IDIV"), path)))
+            {
+                try
+                {
+                    path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("IDIV"), path);
+                    FileInfo fileInfo = new FileInfo(path);
+                    return File(path, MimeMapping.GetMimeMapping(fileInfo.Name), fileInfo.Name);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public FileResult getFileStreamResult(string path)
+        {
+
+            path = Server.UrlDecode(path);
+            if (BExIS.IO.FileHelper.FileExist(Path.Combine(AppConfiguration.GetModuleWorkspacePath("IDIV"), path)))
+            {
+                try
+                {
+                    path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("IDIV"), path);
+                    FileInfo fileInfo = new FileInfo(path);
+                    return new FileStreamResult(new FileStream(path, FileMode.Open), MimeMapping.GetMimeMapping(fileInfo.Name));
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
         public ActionResult FAQ()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("FAQ", this.Session.GetTenant());
             return View();
+        }
+    
+        public ActionResult sharingPolicyFAQ()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Data Sharing and Usage Policy", this.Session.GetTenant());
+            return View();
+        }
+
+        public void Helpdesk()
+        {
+            Response.Redirect("http://bdusupport.idiv.de/");
         }
 
         public ActionResult Contact()

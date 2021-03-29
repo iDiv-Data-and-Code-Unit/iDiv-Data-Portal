@@ -35,6 +35,9 @@
         Coverage = 209,
         Rights = 210,
 
+        //Additional iDiv Keys
+        DataAccessPolicy = 501,
+
         //PanSimple extetntions
         //Additional PanSimple nodes starts at 700
         Keyword = 700,
