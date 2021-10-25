@@ -7,6 +7,10 @@ using Vaiona.Web.Mvc.Models;
 using BExIS.Dlm.Entities.Data;
 using BExIS.Dlm.Services.Data;
 using Vaiona.Web.Extensions;
+using System.IO;
+using System.Web;
+using BExIS.IO;
+using Vaiona.Utils.Cfg;
 
 namespace IDIV.Modules.Idiv.UI.Controllers
 {
@@ -27,6 +31,12 @@ namespace IDIV.Modules.Idiv.UI.Controllers
         public ActionResult FAQ()
         {
             ViewBag.Title = PresentationModel.GetViewTitleForTenant("FAQ", this.Session.GetTenant());
+            return View();
+        }
+
+        public ActionResult QuickGuide()
+        {
+            ViewBag.Title = PresentationModel.GetViewTitleForTenant("QuickGuide", this.Session.GetTenant());
             return View();
         }
 
@@ -93,5 +103,53 @@ namespace IDIV.Modules.Idiv.UI.Controllers
             }
             return dts.ToList();
         }
+
+
+        public FileResult getFile(string path)
+        {
+            path = Server.UrlDecode(path);
+            if (FileHelper.FileExist(Path.Combine(AppConfiguration.GetModuleWorkspacePath("IDIV"), path)))
+            {
+                try
+                {
+                    path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("IDIV"), path);
+                    FileInfo fileInfo = new FileInfo(path);
+                    return File(path, MimeMapping.GetMimeMapping(fileInfo.Name), fileInfo.Name);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public FileResult getFileStreamResult(string path)
+        {
+
+            path = Server.UrlDecode(path);
+            if (FileHelper.FileExist(Path.Combine(AppConfiguration.GetModuleWorkspacePath("IDIV"), path)))
+            {
+                try
+                {
+                    path = Path.Combine(AppConfiguration.GetModuleWorkspacePath("IDIV"), path);
+                    FileInfo fileInfo = new FileInfo(path);
+                    return new FileStreamResult(new FileStream(path, FileMode.Open), MimeMapping.GetMimeMapping(fileInfo.Name));
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
     }
 }
