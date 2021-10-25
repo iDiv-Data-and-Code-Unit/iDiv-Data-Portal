@@ -50,8 +50,9 @@ namespace BExIS.Dim.Helpers
             doiMetadata.PrependChild(header);
 
             XmlElement resource = doiMetadata.CreateElement("resource");
+            resource.SetAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
             resource.SetAttribute("xmlns", "http://datacite.org/schema/kernel-4");
-            resource.SetAttribute("schemaLocation", "http://www.w3.org/2001/XMLSchema-instance", "http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd");
+            resource.SetAttribute("xsi:schemaLocation", "http://www.w3.org/2001/XMLSchema-instance", "http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd");
             doiMetadata.AppendChild(resource);
 
             XmlElement identifier = doiMetadata.CreateElement("identifier");
