@@ -21,12 +21,6 @@
             extends="./settingsRoot"
             />
 
-    <Export tag="lunchbar" id="helpDim" order="5"
-        title="Data Dissemination" description="Data Dissemination Help Manual" icon=""
-        controller="Help" action="index"
-        extends="./lunchbarRoot/help"
-            />
-
     <Export tag="settings" id="doiRequests" order="1"
         title="DOI Requests" description="Manage DOI requests" icon=""
         controller="DataCiteDoi" action="index"
