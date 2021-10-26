@@ -96,16 +96,14 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                 foreach (string s in tmp)
                 {
-                    var email = s.Split(' ');
-                    foreach (var mail in email)
+                    var email = s.Trim();
+                    if (!string.IsNullOrEmpty(email) && !emails.Contains(email))
                     {
-                        if (emails == null || !emails.Contains(mail))
-                        {
-                            emails.Add(mail);
-                        }
+                        emails.Add(email);
                     }
 
                 }
+
                 es.Send(subject, body, emails);
                 es.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
 
