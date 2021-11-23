@@ -1,0 +1,71 @@
+﻿@using Vaiona.Utils.Cfg
+
+@{
+    string path = "";
+    string stream = "";
+}
+<div style="margin:50px;">
+    <h2>View our step-by-step video guides, created to help you get started.</h2>
+    <ol>
+        <li>
+            <h3><b><b>How to Register and create a user account on the Data Repository?</b></b></h3>
+            @{
+                path = @Url.Content("~/idiv/Content/getFile/?path=" + Server.UrlEncode(Path.Combine("Content\\Videos", "RegistrationFinal.mp4")));
+                stream = @Url.Content("~/idiv/Content/getFileStreamResult/?path=" + Server.UrlEncode(Path.Combine("Content\\Videos", "RegistrationFinal.mp4")));
+            }
+            <video controls style="width:640px;margin: 5px 0 5px 0">
+                <source src="@stream">
+                <source src="@path">
+                Your browser does not support the video tag.
+            </video>
+        </li>
+        <li>
+            <h3><b>Metadata Submission</b></h3>
+            @{
+                path = @Url.Content("~/idiv/Content/getFile/?path=" + Server.UrlEncode(Path.Combine("Content\\Videos", "SubmitMetaData.mp4")));
+                stream = @Url.Content("~/idiv/Content/getFileStreamResult/?path=" + Server.UrlEncode(Path.Combine("Content\\Videos", "SubmitMetaData.mp4")));
+            }
+            <video controls style="width:640px;margin: 5px 0 5px 0">
+                <source src="@stream">
+                <source src="@path">
+                Your browser does not support the video tag.
+            </video>
+        </li>
+        <li>
+            <h3><b>How to quickly upload data from Excel spreadsheet (structured) to the data repository?</b></h3>
+            @{
+                path = @Url.Content("~/idiv/Content/getFile/?path=" + Server.UrlEncode(Path.Combine("Content\\Videos", "EasyUpload_Spreadsheets.mp4")));
+                stream = @Url.Content("~/idiv/Content/getFileStreamResult/?path=" + Server.UrlEncode(Path.Combine("Content\\Videos", "EasyUpload_Spreadsheets.mp4")));
+            }
+            <video controls style="width:640px;margin: 5px 0 5px 0">
+                <source src="@stream">
+                <source src="@path">
+                Your browser does not support the video tag.
+            </video>
+        </li>
+        <li>
+            <h3><b>How to quickly upload data files (unstructured dataset) to the data repository?</b></h3>
+            @{
+                path = @Url.Content("~/idiv/Content/getFile/?path=" + Server.UrlEncode(Path.Combine("Content\\Videos", "EasyUpload_Datafiles.mp4")));
+                stream = @Url.Content("~/idiv/Content/getFileStreamResult/?path=" + Server.UrlEncode(Path.Combine("Content\\Videos", "EasyUpload_Datafiles.mp4")));
+            }
+            <video controls style="width:640px;margin: 5px 0 5px 0">
+                <source src="@stream">
+                <source src="@path">
+                Your browser does not support the video tag.
+            </video>
+        </li>
+        <li>
+            <h3><b>How to contact iDiv Biodiversity Informatics Unit Helpdesk for seeking help, advice, consultations related to data handling or to report website issues?</b></h3>
+            @{
+                path = @Url.Content("~/idiv/Content/getFile/?path=" + Server.UrlEncode(Path.Combine("Content\\Videos", "TicketingSystemFinal.mp4")));
+                stream = @Url.Content("~/idiv/Content/getFileStreamResult/?path=" + Server.UrlEncode(Path.Combine("Content\\Videos", "TicketingSystemFinal.mp4")));
+            }
+            <video controls style="width:640px;margin: 5px 0 5px 0">
+                <source src="@stream">
+                <source src="@path">
+                Your browser does not support the video tag.
+            </video>
+        </li>
+    </ol>
+</div>

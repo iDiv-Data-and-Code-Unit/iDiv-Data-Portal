@@ -1,0 +1,85 @@
+﻿@section LeftPane
+{
+    @Html.Partial("_Entities")
+}
+<div id="content_requests_and_decisions"></div>
+
+@section Scripts
+{
+<script type="text/javascript">
+
+    $("#treeView_entities li div").click(function (e){
+        $(e.target).find(".t-in").trigger("click");
+    });
+
+    function getTreeView() {
+        return $('#treeView_entities').data('tTreeView');
+    }
+
+    function treeView_entities_onSelect(e) {
+        var entityId = getTreeView().getItemValue(e.item);
+        var prevSelectedDiv = $(".bx-selected");
+        if (prevSelectedDiv.length > 0) $(prevSelectedDiv).removeClass("bx-selected");
+
+        var selectedDiv = $(e.item).find("div")[0];
+        $(selectedDiv).addClass("bx-selected");
+
+        $('#content_requests_and_decisions').empty();
+
+        $.get('@Url.Action("Requests_And_Decisions", "Requests")',
+            { EntityId: entityId },
+            function (contentData) {
+
+                $('#content_requests_and_decisions').html(contentData);
+
+                truncateTitle();
+            });
+    }
+
+    function grid_requests_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+    }
+
+    function grid_decisions_onDataBound() {
+        addTooltips();
+        resetAllTelerikIconTitles();
+
+        $('.bx-check').click(function () {
+            var result = confirm('Are you sure you want to accept this request (Id:' + $(this).attr("value") + ')?');
+
+            if (result) {
+                $.post('@Url.Action("Accept", "Requests")', { DecisionId: $(this).attr("value") }, function (e) {
+                    $("#grid_decisions .t-refresh").trigger('click');
+                });
+            }
+        });
+
+        $('.bx-delete').click(function () {
+
+
+            var result = confirm('Are you sure you want to reject this request (Id:' + $(this).attr("value") + ')?');
+
+            if (result) {
+            $.post('@Url.Action("Reject", "Requests")', { requestId: $(this).attr("value") }, function (e) {
+                    console.log("reject");
+                    $("#grid_decisions .t-refresh").trigger('click');
+                });
+            }
+        });
+
+         $('.bx-withdraw').click(function () {
+
+
+            var result = confirm('Are you sure you want to withdraw this request (Id:' + $(this).attr("value") + ')?');
+
+            if (result) {
+            $.post('@Url.Action("Withdraw", "Requests")', { requestId: $(this).attr("value") }, function (e) {
+                    console.log("withdraw");
+                    $("#grid_decisions .t-refresh").trigger('click');
+                });
+            }
+        });
+    }
+</script>
+}
