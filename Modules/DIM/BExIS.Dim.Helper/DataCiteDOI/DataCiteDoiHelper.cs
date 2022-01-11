@@ -69,7 +69,7 @@ namespace BExIS.Dim.Helpers
                         Version = $"{version}",
                         Dates = new List<DataCiteDate>() { new DataCiteDate() { Type = DataCiteDateType.Issued, Date = $"{DateTime.UtcNow.Year}" } },
                         DOI = doi,
-                        Event = Event.Register,
+                        Event = Event.Hide,
                         Types = new DataCiteTypes() { ResourceTypeGeneral = ResourceType.Dataset },
                         PublicationYear = DateTime.UtcNow.Year,
                         Publisher = ConfigurationManager.AppSettings["doiPublisher"],
