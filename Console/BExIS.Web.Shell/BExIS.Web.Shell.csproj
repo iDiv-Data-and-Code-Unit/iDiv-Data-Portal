@@ -30,7 +30,8 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <IISExpressSSLPort>44345</IISExpressSSLPort>
+    <IISExpressSSLPort>
+    </IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>
     </IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>
@@ -1133,7 +1134,9 @@
     <Content Include="Views\Shared\SessionTimeout.cshtml" />
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
-    <Content Include="Web.config.sample" />
+    <None Include="Web.config.sample">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
