@@ -33,32 +33,27 @@
             extends="./lunchbarRoot/help"
             />
 
-    <Export tag="internalAction" id="publishDataset" order="1"
-                title="Data Dissemination Publish Dataset" description="Publish a dataset." icon=""
-                controller="submission" action="getPublishDataPartialView"
-                extends=""
-            />
-    <Export tag="internalAction" id="goToMappingViewWithSourceMetadata" order="1"
-                title="go the the mapping view where source = metadatatstructure" description="call a action that returns a view where you can map elemnts" icon=""
-                controller="mapping" action="index"
-                extends=""
-            />
+		<Export tag="internalAction" id="publishDataset" order="1"
+					title="Data Dissemination Publish Dataset" description="Publish a dataset." icon=""
+					controller="submission" action="getPublishDataPartialView"
+					extends="" />
+		<Export tag="internalAction" id="goToMappingViewWithSourceMetadata" order="1"
+					title="go the the mapping view where source = metadatatstructure" description="call a action that returns a view where you can map elemnts" icon=""
+					controller="mapping" action="index"
+					extends="" />
 
-    <Export tag="internalAction" id="goToMappingView" order="1"
-                title="go the the mapping view where source can be no metadata Structure" description="call a action that returns a view where you can map elemnts" icon=""
-                controller="mapping" action="mapping"
-                extends=""
-            />
+		<Export tag="internalAction" id="goToMappingView" order="1"
+					title="go the the mapping view where source can be no metadata Structure" description="call a action that returns a view where you can map elemnts" icon=""
+					controller="mapping" action="mapping"
+					extends="" />
 
-    <Export tag="internalAction" id="getZipOfVersion" order="1"
-                title="Get a zipfile of a datasetversion" description="" icon=""
-                controller="export" action="GenerateZip"
-                extends=""
-            />
-    <Export tag="internalAction" id="simplaeDataStructure" order="1"
-                title="Get a simple data structure html view" description="" icon=""
-                controller="export" action="SimpleDataStructure"
-                extends=""
-            />
-  </Exports>
+		<Export tag="internalAction" id="getZipOfVersion" order="1"
+					title="Get a zipfile of a datasetversion" description="" icon=""
+					controller="export" action="GenerateZip"
+					extends="" />
+		<Export tag="internalAction" id="simplaeDataStructure" order="1"
+					title="Get a simple data structure html view" description="" icon=""
+					controller="export" action="SimpleDataStructure"
+					extends="" />
+	</Exports>
 </Manifest>
