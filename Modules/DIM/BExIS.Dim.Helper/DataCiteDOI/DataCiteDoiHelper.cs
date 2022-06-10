@@ -16,6 +16,7 @@ using RestSharp;
 using RestSharp.Authenticators;
 using Lucifron.ReST.Models;
 using Newtonsoft.Json.Linq;
+using Lucifron.ReST.Models.DataCite;
 
 namespace BExIS.Dim.Helpers
 {
@@ -60,21 +61,21 @@ namespace BExIS.Dim.Helpers
             {
                 Data = new DataCiteData()
                 {
-                    Type = Lucifron.ReST.Models.Type.DOIs,
-                    Attributes = new Attributes()
+                    Type = DataCiteType.DOIs,
+                    Attributes = new DataCiteAttributes()
                     {
-                        Creators = authors.Select(a => new DataCiteCreator() { Name = a }).ToList(),
+                        Creators = authors.Select(a => DataCiteCreator.Convert(a, DataCiteCreatorType.Personal)).ToList(),
                         Titles = titles.Select(t => new DataCiteTitle() { Title = t }).ToList(),
                         Subjects = subjects.Select(s => new DataCiteSubject() { Subject = s }).ToList(),
                         Version = $"{version}",
-                        Dates = new List<DataCiteDate>() { new DataCiteDate() { Type = DataCiteDateType.Issued, Date = $"{DateTime.UtcNow.Year}" } },
+                        Dates = new List<DataCiteDate>() { new DataCiteDate() { DateType = DataCiteDateType.Issued, Date = $"{DateTime.UtcNow.Year}" } },
                         DOI = doi,
-                        Event = Event.Hide,
-                        Types = new DataCiteTypes() { ResourceTypeGeneral = ResourceType.Dataset },
+                        Event = DataCiteEventType.Hide,
+                        Types = new DataCiteTypes() { ResourceTypeGeneral = DataCiteResourceType.Dataset },
                         PublicationYear = DateTime.UtcNow.Year,
                         Publisher = ConfigurationManager.AppSettings["doiPublisher"],
                         URL = $"{datasetUrl}?version={version}",
-                        Descriptions = descriptions.Select(d => new DataCiteDescription() { Language = null, Description = d, DataCiteDescriptionType = DataCiteDescriptionType.Abstract }).ToList()
+                        Descriptions = descriptions.Select(d => new DataCiteDescription() { Language = null, Description = d, DescriptionType = DataCiteDescriptionType.Abstract }).ToList()
                     }
                 }
             };
@@ -85,11 +86,11 @@ namespace BExIS.Dim.Helpers
             return response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Created;
         }
 
-        public string issueDoi(DatasetVersion datasetVersion , string datasetUrl, long versionNo)
+        public string issueDoi(DatasetVersion datasetVersion, string datasetUrl, long versionNo)
         {
-           // BExISDOIClient.BExISDOIClient doiClient = new BExISDOIClient.BExISDOIClient();
-           // bool testmode = Convert.ToBoolean(ConfigurationManager.AppSettings["doiTestmode"]);
-           string token = ConfigurationManager.AppSettings["doiToken"];
+            // BExISDOIClient.BExISDOIClient doiClient = new BExISDOIClient.BExISDOIClient();
+            // bool testmode = Convert.ToBoolean(ConfigurationManager.AppSettings["doiTestmode"]);
+            string token = ConfigurationManager.AppSettings["doiToken"];
 
             // string doiProvider = doiClient.getProviderList(token).Where(t => t.ToLower().Equals(ConfigurationManager.AppSettings["doiProvider"].ToLower())).FirstOrDefault();           
             // string doi = doiClient.getDoi(doiProvider, testmode, testmode, "DS" + datasetVersion.Dataset.Id + "VN" + versionNo + "DV" + datasetVersion.Id, token);
@@ -183,7 +184,7 @@ namespace BExIS.Dim.Helpers
             {
                 XmlElement title = doiMetadata.CreateElement("title");
                 title.InnerText = new XmlDatasetHelper().GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                titles.AppendChild(title);                
+                titles.AppendChild(title);
             }
 
             XmlElement publisher = doiMetadata.CreateElement("publisher");
@@ -252,7 +253,7 @@ namespace BExIS.Dim.Helpers
                         descriptions.AppendChild(description);
                     }
                 }
-            }            
+            }
 
             return doiClient.postMetadata(doiProvider, testmode, testmode, doiMetadata, doi, token);
         }
@@ -283,5 +284,5 @@ namespace BExIS.Dim.Helpers
 
             es.Send(subject, body, ConfigurationManager.AppSettings["SystemEmail"]);
         }
-    }   
+    }
 }
