@@ -446,7 +446,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
                         #endregion GENERIC
                     }
-
                     if (datarepo.ToLower().Equals("doi"))
                     {
                         #region datacite
