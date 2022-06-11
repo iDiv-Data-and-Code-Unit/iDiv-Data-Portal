@@ -17,7 +17,7 @@ namespace BExIS.Dim.Entities.Publication
         /// <summary>
         /// DOI of a object from a Repository
         /// </summary>
-        //public virtual string Doi { get; set; }
+        public virtual string Doi { get; set; }
         /// <summary>
         /// Id of a object from a Broker
         /// </summary>
