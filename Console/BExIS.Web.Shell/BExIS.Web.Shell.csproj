@@ -30,7 +30,8 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
-    <IISExpressSSLPort>44345</IISExpressSSLPort>
+    <IISExpressSSLPort>
+    </IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>
     </IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>
@@ -407,6 +408,7 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="Attributes\BExISAuthorizeAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\API\TokenController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FooterController.cs" />
     <Compile Include="Controllers\HelpController.cs" />
@@ -1133,7 +1135,9 @@
     <Content Include="Views\Shared\SessionTimeout.cshtml" />
     <Content Include="Views\Home\Version.cshtml" />
     <Content Include="Views\Home\NoPermission.cshtml" />
-    <Content Include="Web.config.sample" />
+    <None Include="Web.config.sample">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Areas\" />
@@ -1430,7 +1434,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>5412</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost:44345/</IISUrl>
+          <IISUrl>https://localhost:44380/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
