@@ -1,0 +1,17 @@
+﻿@using Vaiona.Web.Mvc;
+@using BExIS.Web.Shell.Areas.DDM.Controllers;
+<p>
+    <br />
+
+    @if (Request.IsAuthenticated)
+    {
+        @Html.RenderAuto("ShowMyDatasets")
+    }
+    else
+    {
+        <p>
+            <p><b>You are not logged in.</b></p>
+            <p>Please <a href="#" onclick="LogOn()">Login</a> or <a href="#" onclick="Register()">Register</a> to continue.</p>
+        </p>
+    }
+    </p>

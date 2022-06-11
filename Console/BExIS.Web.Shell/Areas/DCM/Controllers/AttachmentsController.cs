@@ -7,15 +7,18 @@ using BExIS.Security.Entities.Authorization;
 using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Subjects;
+using BExIS.Security.Services.Utilities;
 using BExIS.Xml.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Xml;
 using Vaiona.Entities.Common;
+using Vaiona.Logging;
 using Vaiona.Utils.Cfg;
 using Vaiona.Web.Extensions;
 using Vaiona.Web.Mvc.Models;
@@ -35,6 +38,15 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         {
             ViewBag.datasetId = datasetId;
             ViewBag.versionId = versionId;
+
+            //get max file name length
+            // get max file lenght
+            var dataPath = AppConfiguration.DataPath; //Path.Combine(AppConfiguration.WorkspaceRootPath, "Data");
+            var storepath = Path.Combine(dataPath, "Temp", GetUsernameOrDefault());
+
+            ViewBag.maxFileNameLength = 260 - storepath.Length - 2;
+
+
             return PartialView("_datasetAttachements", LoadDatasetModel(versionId));
         }
 
@@ -48,65 +60,74 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult Delete(long datasetId, String fileName)
         {
-            var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
-            FileHelper.Delete(filePath);
-            var dm = new DatasetManager();
-            var dataset = dm.GetDataset(datasetId);
-            var datasetVersion = dm.GetDatasetLatestVersion(dataset);
-            var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == fileName);
-            if (contentDescriptor == null)
-                throw new Exception("There is not any content descriptor having file name '" + fileName + "'. ");
-
-            datasetVersion.ContentDescriptors.Remove(contentDescriptor);
-
-            datasetVersion.ModificationInfo = new EntityAuditInfo()
+            using (var dm = new DatasetManager())
             {
-                Performer = GetUsernameOrDefault(),
-                Comment = "Attachment",
-                ActionType = AuditActionType.Delete
-            };
+                var filePath = Path.Combine(AppConfiguration.DataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
+                FileHelper.Delete(filePath);
+                var dataset = dm.GetDataset(datasetId);
+                var datasetVersion = dm.GetDatasetLatestVersion(dataset);
+                var contentDescriptor = datasetVersion.ContentDescriptors.FirstOrDefault(item => item.Name == fileName);
+                if (contentDescriptor == null)
+                    throw new Exception("There is not any content descriptor having file name '" + fileName + "'. ");
 
-            dm.EditDatasetVersion(datasetVersion, null, null, null);
-            dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
+                datasetVersion.ContentDescriptors.Remove(contentDescriptor);
 
-            dm?.Dispose();
+                datasetVersion.ModificationInfo = new EntityAuditInfo()
+                {
+                    Performer = GetUsernameOrDefault(),
+                    Comment = "Attachment",
+                    ActionType = AuditActionType.Delete
+                };
+
+                dm.EditDatasetVersion(datasetVersion, null, null, null);
+                dm.CheckInDataset(dataset.Id, fileName, GetUsernameOrDefault(), ViewCreationBehavior.None);
+
+                var es = new EmailService();
+
+                es.Send(MessageHelper.GetAttachmentDeleteHeader(datasetId, typeof(Dataset).Name),
+                MessageHelper.GetAttachmentDeleteMessage(datasetId, fileName, GetUsernameOrDefault()),
+                ConfigurationManager.AppSettings["SystemEmail"]
+                );
+
+            }
+
             return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
 
         private DatasetFilesModel LoadDatasetModel(long versionId)
         {
-            EntityPermissionManager entityPermissionManager = new EntityPermissionManager();
-            EntityManager entityManager = new EntityManager();
-            UserManager userManager = new UserManager();
-            var dm = new DatasetManager();
-            var datasetVersion = dm.GetDatasetVersion(versionId);
-            var model = new DatasetFilesModel
+            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
+            using (EntityManager entityManager = new EntityManager())
+            using (UserManager userManager = new UserManager())
+            using (DatasetManager dm = new DatasetManager())
             {
-                ServerFileList = GetDatasetFileList(datasetVersion),
-                FileSize = this.Session.GetTenant().MaximumUploadSize
-            };
+                var datasetVersion = dm.GetDatasetVersion(versionId);
+                var model = new DatasetFilesModel
+                {
+                    ServerFileList = GetDatasetFileList(datasetVersion),
+                    // FileSize = this.Session.GetTenant().MaximumUploadSize
+                };
 
-            //Parse user right
+                //Parse user right
 
-            var entity = entityManager.EntityRepository.Query(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant() && e.EntityType == typeof(Dataset)).FirstOrDefault();
+                var entity = entityManager.EntityRepository.Query(e => e.Name.ToUpperInvariant() == "Dataset".ToUpperInvariant() && e.EntityType == typeof(Dataset)).FirstOrDefault();
 
-            var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
-            userTask.Wait();
-            var user = userTask.Result;
-            int rights = 0;
-            if (user == null)
-                rights = entityPermissionManager.GetEffectiveRights(null, entity.Id, datasetVersion.Dataset.Id);
-            else
-                rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetVersion.Dataset.Id);
-            model.UploadAccess = (((rights & (int)RightType.Write) > 0) || ((rights & (int)RightType.Grant) > 0));
-            model.DeleteAccess = (((rights & (int)RightType.Delete) > 0) || ((rights & (int)RightType.Grant) > 0));
-            model.DownloadAccess = ((rights & (int)RightType.Read) > 0 || ((rights & (int)RightType.Grant) > 0));
-            model.ViewAccess = ((rights & (int)RightType.Read) > 0 || ((rights & (int)RightType.Grant) > 0));
-            userManager?.Dispose();
-            entityPermissionManager?.Dispose();
-            entityManager?.Dispose();
-            dm?.Dispose();
-            return model;
+                var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                userTask.Wait();
+                var user = userTask.Result;
+                int rights = 0;
+                if (user == null)
+                    rights = entityPermissionManager.GetEffectiveRights(subjectId:null, entity.Id, datasetVersion.Dataset.Id);
+                else
+                    rights = entityPermissionManager.GetEffectiveRights(user.Id, entity.Id, datasetVersion.Dataset.Id);
+                model.UploadAccess = (((rights & (int)RightType.Write) > 0) || ((rights & (int)RightType.Grant) > 0));
+                model.DeleteAccess = (((rights & (int)RightType.Delete) > 0) || ((rights & (int)RightType.Grant) > 0));
+                model.DownloadAccess = ((rights & (int)RightType.Read) > 0 || ((rights & (int)RightType.Grant) > 0));
+                model.ViewAccess = ((rights & (int)RightType.Read) > 0 || ((rights & (int)RightType.Grant) > 0));
+
+
+                return model;
+            }
         }
 
         /// <summary>
@@ -128,7 +149,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     //    contentDescriptor.URI = "delete";
                     //else
                     fileLength = new FileInfo(filepath).Length;
-                    fileList.Add(new BasicFileInfo(contentDescriptorName, contentDescriptor.URI, contentDescriptor.MimeType, "", fileLength), GetDescription(contentDescriptor.Extra));
+                    fileList.Add(new BasicFileInfo(contentDescriptorName, contentDescriptor.URI, contentDescriptor.MimeType, "", fileLength), contentDescriptor.Description);
                 }
             }
             return fileList;
@@ -138,73 +159,98 @@ namespace BExIS.Modules.Dcm.UI.Controllers
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public ActionResult ProcessSubmit(IEnumerable<HttpPostedFileBase> attachments, long datasetId, String description)
         {
-            ViewBag.Title = PresentationModel.GetViewTitleForTenant("Attach file to dataset", this.Session.GetTenant());
-            // The Name of the Upload component is "attachments"
-            if (attachments != null)
+            using (UserManager userManager = new UserManager())
             {
-                Session["FileInfos"] = attachments;
-                uploadFiles(attachments, datasetId, description);
+                ViewBag.Title = PresentationModel.GetViewTitleForTenant("Attach file to dataset", this.Session.GetTenant());
+                // The Name of the Upload component is "attachments"
+                if (attachments != null)
+                {
+                    Session["FileInfos"] = attachments;
+                    uploadFiles(attachments, datasetId, description);
+
+                   
+
+                    var es = new EmailService();
+                    var filemNames = "";
+
+                    var userTask = userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+                    userTask.Wait();
+                    var user = userTask.Result;
+
+                    foreach (var file in attachments)
+                    {
+                        var fileName = Path.GetFileName(file.FileName);
+                        filemNames += fileName.ToString() + ",";
+
+                    }
+                    es.Send(MessageHelper.GetAttachmentUploadHeader(datasetId, typeof(Dataset).Name),
+                    MessageHelper.GetAttachmentUploadMessage(datasetId, filemNames, user.DisplayName),
+                    ConfigurationManager.AppSettings["SystemEmail"]
+                    );
+                }
+
+                // Redirect to a view showing the result of the form submission.
+                return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
             }
-            // Redirect to a view showing the result of the form submission.
-            return RedirectToAction("showdata", "data", new { area = "ddm", id = datasetId });
         }
 
         [BExISEntityAuthorize(typeof(Dataset), "datasetId", RightType.Write)]
         public void uploadFiles(IEnumerable<HttpPostedFileBase> attachments, long datasetId, String description)
         {
             var filemNames = "";
-            var dm = new DatasetManager();
-            var dataset = dm.GetDataset(datasetId);
-            // var datasetVersion = dm.GetDatasetLatestVersion(dataset);
-
-            DatasetVersion latestVersion = dm.GetDatasetLatestVersion(datasetId);
-            string status = DatasetStateInfo.NotValid.ToString();
-            if (latestVersion.StateInfo != null) status = latestVersion.StateInfo.State;
-
-            if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
+            using (var dm = new DatasetManager())
             {
-                DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
+                var dataset = dm.GetDataset(datasetId);
+                // var datasetVersion = dm.GetDatasetLatestVersion(dataset);
 
-                //set StateInfo of the previus version
-                if (datasetVersion.StateInfo == null)
+                DatasetVersion latestVersion = dm.GetDatasetLatestVersion(datasetId);
+                string status = DatasetStateInfo.NotValid.ToString();
+                if (latestVersion.StateInfo != null) status = latestVersion.StateInfo.State;
+
+                if (dm.IsDatasetCheckedOutFor(datasetId, GetUsernameOrDefault()) || dm.CheckOutDataset(datasetId, GetUsernameOrDefault()))
                 {
-                    datasetVersion.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                    DatasetVersion datasetVersion = dm.GetDatasetWorkingCopy(datasetId);
+
+                    //set StateInfo of the previus version
+                    if (datasetVersion.StateInfo == null)
                     {
-                        State = status
+                        datasetVersion.StateInfo = new Vaiona.Entities.Common.EntityStateInfo()
+                        {
+                            State = status
+                        };
+                    }
+                    else
+                    {
+                        datasetVersion.StateInfo.State = status;
+                    }
+
+
+                    foreach (var file in attachments)
+                    {
+                        var fileName = Path.GetFileName(file.FileName);
+                        filemNames += fileName.ToString() + ",";
+                        var dataPath = AppConfiguration.DataPath;
+                        if (!Directory.Exists(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments")))
+                            Directory.CreateDirectory(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments"));
+                        var destinationPath = Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
+                        file.SaveAs(destinationPath);
+                        AddFileInContentDiscriptor(datasetVersion, fileName, description);
+                    }
+
+                    //set modification
+                    datasetVersion.ModificationInfo = new EntityAuditInfo()
+                    {
+                        Performer = GetUsernameOrDefault(),
+                        Comment = "Attachment",
+                        ActionType = AuditActionType.Create
                     };
+
+                    string filenameList = string.Join(", ", attachments.Select(f => f.FileName).ToArray());
+
+                    dm.EditDatasetVersion(datasetVersion, null, null, null);
+                    dm.CheckInDataset(dataset.Id, filenameList, GetUsernameOrDefault(), ViewCreationBehavior.None);
                 }
-                else
-                {
-                    datasetVersion.StateInfo.State = status;
-                }
-
-
-                foreach (var file in attachments)
-                {
-                    var fileName = Path.GetFileName(file.FileName);
-                    filemNames += fileName.ToString() + ",";
-                    var dataPath = AppConfiguration.DataPath;
-                    if (!Directory.Exists(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments")))
-                        Directory.CreateDirectory(Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments"));
-                    var destinationPath = Path.Combine(dataPath, "Datasets", datasetId.ToString(), "Attachments", fileName);
-                    file.SaveAs(destinationPath);
-                    AddFileInContentDiscriptor(datasetVersion, fileName, description);
-                }
-
-                //set modification
-                datasetVersion.ModificationInfo = new EntityAuditInfo()
-                {
-                    Performer = GetUsernameOrDefault(),
-                    Comment = "Attachment",
-                    ActionType = AuditActionType.Create
-                };
-
-                string filenameList = string.Join(", ", attachments.Select(f => f.FileName).ToArray());
-
-                dm.EditDatasetVersion(datasetVersion, null, null, null);
-                dm.CheckInDataset(dataset.Id, filenameList, GetUsernameOrDefault(), ViewCreationBehavior.None);
             }
-            dm?.Dispose();
         }
 
         private string AddFileInContentDiscriptor(DatasetVersion datasetVersion, String fileName, String description)
@@ -232,15 +278,16 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                     if (cd.Name == originalDescriptor.Name)
                     {
                         cd.URI = originalDescriptor.URI;
-                        cd.Extra = SetDescription(cd.Extra, description);
+                        // cd.Extra = SetDescription(cd.Extra, description);
+                        cd.Description = originalDescriptor.Description;
                     }
                 }
             }
             else
             {
                 // add file description Node
-                XmlDocument doc = SetDescription(originalDescriptor.Extra, description);
-                originalDescriptor.Extra = doc;
+                //XmlDocument doc = SetDescription(originalDescriptor.Extra, description);
+                originalDescriptor.Description = description;
                 //Add current contentdesciptor to list
                 datasetVersion.ContentDescriptors.Add(originalDescriptor);
             }
@@ -248,6 +295,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             return storePath;
         }
 
+        /*
         private XmlDocument SetDescription(XmlNode extraField, string description)
         {
             XmlNode newExtra;
@@ -285,7 +333,7 @@ namespace BExIS.Modules.Dcm.UI.Controllers
                 }
             }
             return "";
-        }
+        }*/
 
         public string GetUsernameOrDefault()
         {

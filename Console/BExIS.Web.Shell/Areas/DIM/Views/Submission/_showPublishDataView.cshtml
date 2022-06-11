@@ -254,6 +254,7 @@
                 <th style="width: 80px;">Version</th>
                 <th>Publisher</th>
                 <th>Data Repository</th>
+                <th>DOI</th>
                 <th>Creation Date</th>
                 <th>Status</th>
                 <th>Link</th>
@@ -263,28 +264,39 @@
             {
                 foreach (var publication in Model.Publications)
                 {
-                    <tr>
-                        <td>@publication.DatasetVersionNr</td>
-                        <td>@publication.Broker.Name</td>
-                        <td>@publication.DataRepo</td>
-                        <td>@publication.CreationDate.ToLocalTime()</td>
-                        <td>@publication.Status</td>
-                        <td><a href="@publication.Broker.Link" target="_blank">Website</a></td>
+        <tr>
+            <td>@publication.DatasetVersionNr</td>
+            <td>@publication.Broker.Name</td>
+            <td>@publication.DataRepo</td>
+          @if (!String.IsNullOrEmpty(publication.ExternalLink))
+            {
+                string doiLink = "https://doi.org/" + publication.ExternalLink;
+                <td>
+                    <a href="@doiLink">@publication.ExternalLink</a>
+                </td>
+            }
+            else
+            {
+                <td></td>
+            }
+            <td>@publication.CreationDate.ToLocalTime()</td>
+            <td>@publication.Status</td>
+            <td><a href="@publication.Broker.Link" target="_blank">Website</a></td>
 
-                        <td>
-                            @foreach (var datarepo in publication.Broker.DataRepos)
-                            {
-                                if (Model.DownloadRights)
-                                 {
-                                     @Html.ActionLink(" ", "DownloadZip", "Submission", new {broker = publication.Broker.Name, datarepo, datasetversionid = publication.DatasetVersionId}, new {@class = "bx bx-grid-function bx-download", title = "Download for "+datarepo})
-                                 }
-                                 else
-                                 {
-                                     <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
-                                 }
-                            }
-                        </td>
-                    </tr>
+            <td>
+                @foreach (var datarepo in publication.Broker.DataRepos)
+                {
+                    if (Model.DownloadRights)
+                    {
+                        @Html.ActionLink(" ", "DownloadZip", "Submission", new { broker = publication.Broker.Name, datarepo, datasetversionid = publication.DatasetVersionId }, new { @class = "bx bx-grid-function bx-download", title = "Download for " + datarepo })
+                    }
+                    else
+                    {
+                        <a class="bx bx-grid-function bx-download bx-disabled" disabled="disabled" title="You do not have permission to download this dataset."></a>
+                    }
+                }
+            </td>
+        </tr>
                 }
             }
             else

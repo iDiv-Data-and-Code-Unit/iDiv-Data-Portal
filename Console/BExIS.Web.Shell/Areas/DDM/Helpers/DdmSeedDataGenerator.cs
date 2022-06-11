@@ -13,10 +13,9 @@ namespace BExIS.Modules.Ddm.UI.Helpers
     {
         public void GenerateSeedData()
         {
-            FeatureManager featureManager = new FeatureManager();
-            OperationManager operationManager = new OperationManager();
-
-            try
+            using (FeatureManager featureManager = new FeatureManager())
+            using (OperationManager operationManager = new OperationManager())
+            using (var featurePermissionManager = new FeaturePermissionManager())
             {
 
                 #region SECURITY
@@ -51,7 +50,19 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 if (Dashboard == null) Dashboard = featureManager.Create("Dashboard", "Dashboard", DataDiscovery);
 
 
+                Feature RequestsManage = features.FirstOrDefault(f =>
+                    f.Name.Equals("Requests Manage") &&
+                    f.Parent != null &&
+                    f.Parent.Id.Equals(DataDiscovery.Id));
 
+                if (RequestsManage == null) RequestsManage = featureManager.Create("Requests Manage", "Manange requests by user", DataDiscovery);
+
+                Feature RequestsSend = features.FirstOrDefault(f =>
+                   f.Name.Equals("Requests Send") &&
+                   f.Parent != null &&
+                   f.Parent.Id.Equals(DataDiscovery.Id));
+
+                if (RequestsSend == null) RequestsSend = featureManager.Create("Requests Send", "Allow to send requests", DataDiscovery);
                 //worklfows -> create dataset ->
                 //WorkflowManager workflowManager = new WorkflowManager();
 
@@ -84,9 +95,9 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 // place for dashboard!?
                 operationManager.Create("DDM", "PublicSearch", "*");
                 operationManager.Create("DDM", "Home", "*", SearchFeature);
-                operationManager.Create("DDM", "Data", "*", SearchFeature);
+                operationManager.Create("DDM", "Data", "*");
 
-                var featurePermissionManager = new FeaturePermissionManager();
+
 
                 if (!featurePermissionManager.Exists(null, SearchFeature.Id, PermissionType.Grant))
                     featurePermissionManager.Create(null, SearchFeature.Id, PermissionType.Grant);
@@ -106,12 +117,15 @@ namespace BExIS.Modules.Ddm.UI.Helpers
 
                 #endregion
 
+                #region Requests
+                operationManager.Create("DDM", "RequestsManage", "*", RequestsManage);
+                operationManager.Create("DDM", "RequestsSend", "*", RequestsSend);
+
                 #endregion
-            }
-            finally
-            {
-                featureManager.Dispose();
-                operationManager.Dispose();
+
+                #endregion
+
+
             }
 
         }

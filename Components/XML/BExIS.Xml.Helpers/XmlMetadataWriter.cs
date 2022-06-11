@@ -55,22 +55,23 @@ namespace BExIS.Xml.Helpers
         /// <returns></returns>
         public XDocument CreateMetadataXml(long metadataStructureId, XDocument importXml = null)
         {
-            MetadataStructureManager metadataStructureManager = new MetadataStructureManager();
-            MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId);
-
-            List<Int64> packageIds = metadataStructureManager.GetEffectivePackageIds(metadataStructureId).ToList();
-
-            // Create xml Document
-            // Create the xml document containe
-            XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
-                                            //XDeclaration dec = new XDeclaration("1.0", null, null);
-                                            //doc.Add(dec);// Create the root element
-            XElement root = new XElement("Metadata");
-            root.SetAttributeValue("id", metadataStructure.Id.ToString());
-            doc.Add(root);
-
             using (IUnitOfWork uow = this.GetUnitOfWork())
+            using (MetadataStructureManager metadataStructureManager = new MetadataStructureManager())
             {
+                MetadataStructure metadataStructure = this.GetUnitOfWork().GetReadOnlyRepository<MetadataStructure>().Get(metadataStructureId);
+
+                List<Int64> packageIds = metadataStructureManager.GetEffectivePackageIds(metadataStructureId).ToList();
+
+                // Create xml Document
+                // Create the xml document containe
+                XDocument doc = new XDocument();// Create the XML Declaration, and append it to XML document
+                                                //XDeclaration dec = new XDeclaration("1.0", null, null);
+                                                //doc.Add(dec);// Create the root element
+                XElement root = new XElement("Metadata");
+                root.SetAttributeValue("id", metadataStructure.Id.ToString());
+                doc.Add(root);
+
+            
                 IList<MetadataPackageUsage> packages = uow.GetReadOnlyRepository<MetadataPackageUsage>().Get(p => packageIds.Contains(p.Id));
                 List<MetadataAttributeUsage> attributes;
                 foreach (MetadataPackageUsage mpu in packages)
@@ -447,7 +448,16 @@ namespace BExIS.Xml.Helpers
                 MetadataAttributeUsage metadataAttributeUsage = (MetadataAttributeUsage)attributeUsage;
                 typeName = metadataAttributeUsage.MetadataAttribute.Name;
                 id = metadataAttributeUsage.MetadataAttribute.Id.ToString();
-                roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+
+                // changed by Sven & David @ 2021-04-28
+                // roleId = metadataAttributeUsage.MetadataAttribute.Id.ToString();
+                roleId = metadataAttributeUsage.Id.ToString();
+
+                if (metadataAttributeUsage.MetadataAttribute.Self is MetadataCompoundAttribute)
+                {
+                    MetadataCompoundAttribute mca = (MetadataCompoundAttribute)metadataAttributeUsage.MetadataAttribute.Self;
+                    children = mca.MetadataNestedAttributeUsages.ToList();
+                }
             }
             else
             {

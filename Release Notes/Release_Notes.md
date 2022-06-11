@@ -1,19 +1,43 @@
-# BEXIS 2.14.1 Release Notes
+# BEXIS 2.14.5 Release Notes
+
+Attention: Changes were made in the web.config in line: 72 (see [#803](https://github.com/BEXIS2/Core/issues/803))
+
+### Features
+
 
 ### Enhancements
-- Performance improvement of the database update script from version 2.13-2.14 ([#614](https://github.com/BEXIS2/Core/issues/614))
-- Refactor unstrucured data files name handling ([#611](https://github.com/BEXIS2/Core/issues/611))
-
+- Data policy checkbox removed from registration (does not need to be agreed on) ([#784](https://github.com/BEXIS2/Core/issues/784))
+- Requests and Decissions: Date column sortable ([#781](https://github.com/BEXIS2/Core/issues/781))
+- Replace "Show Data/Dataset" by the current entity name (e.g. Publication) ([#769](https://github.com/BEXIS2/Core/issues/769))
+- Sort users descending by id (manage parties)([#806](https://github.com/BEXIS2/Core/issues/806))
+- Sort data structures descending by id ([#807](https://github.com/BEXIS2/Core/issues/807))
+- Sort users descending by id ([#826](https://github.com/BEXIS2/Core/issues/826))
+- Permission Requests: User without request features rights should not be able to send requests ([#809](https://github.com/BEXIS2/Core/issues/809))
+- Prevent newer metadata versions do not use materialized view, although data has not changed ([#823](https://github.com/BEXIS2/Core/issues/823))
+- EmailService allows optional attachments [#814](https://github.com/BEXIS2/Core/issues/814))
+  
 ### Bugs
-- Fix occurred errors with requests ([#615](https://github.com/BEXIS2/Core/issues/615)) and links ([#617](https://github.com/BEXIS2/Core/issues/617)) when datasets were deleted/purged. 
-- Fix error while downloading a dataset of type unstrutcured ([#613](https://github.com/BEXIS2/Core/issues/613))
-- Fix Decrease default batch size to max allowed parameters for a single statement (PostgreSQL) ([#609](https://github.com/BEXIS2/Core/issues/609))
-- Fix selected data types were selected when the Create Unit form was opened again ([#603](https://github.com/BEXIS2/Core/issues/603))
+- Fix only a maximum of 100 variables possible inside a data structure (max size of JSON objects too small) ([#803](https://github.com/BEXIS2/Core/issues/803))
+- Fix files with longer file names not possible for upload (URI field to short for contentdescriptor) ([#800](https://github.com/BEXIS2/Core/issues/800))
+- Fix appliaction name missing in header on Log In page ([#786](https://github.com/BEXIS2/Core/issues/786))
+- Fix user names during registration should not allow ending spaces ([#786](https://github.com/BEXIS2/Core/issues/786))
+- Fix missing white space on primary data page ([#780](https://github.com/BEXIS2/Core/issues/780))
+- Fix missing "Terms and Conditions" link in footer ([#785](https://github.com/BEXIS2/Core/issues/785))
+- Fix error during data validation (constraints not checked correctly) ([#792](https://github.com/BEXIS2/Core/issues/792))([#804](https://github.com/BEXIS2/Core/issues/804))
+- Fix data structure was not anymore editable after import ([#791](https://github.com/BEXIS2/Core/issues/791))
+- Fix missing checkedIn after rollback during data upload ([#805](https://github.com/BEXIS2/Core/issues/805))
+- Fix missing values sometimes disappaer after save ([#774](https://github.com/BEXIS2/Core/issues/774))
+- Fix download metadata only returned latest version ([#771](https://github.com/BEXIS2/Core/issues/771))
+- Fix image view can not be closed (unstructured data) ([#797](https://github.com/BEXIS2/Core/issues/797))
+- Fix primary data of unstructured datasets are not visible without rights in public data view ([#799](https://github.com/BEXIS2/Core/issues/799))
+- Fix download notification are send on image preview ([#767](https://github.com/BEXIS2/Core/issues/767))
+- Fix dataset download as Excel for > 1 Mio for Datasets should not be allowed ([#825](https://github.com/BEXIS2/Core/issues/825))
+- Fix default execution time for SQL statements by default only 60 seconds (now 3 minutes) ([#816](https://github.com/BEXIS2/Core/issues/816))
 
 ## I. Software Information
 
 -	Name: BEXIS
--	Version: 2.14.0
+-	Version: 2.14.5
 -	Application Type: Web Application
 -	Platform: Windows
 
@@ -23,11 +47,10 @@
 
 ## III. System Requirements
 
-- Operating System: Windows Server 2008 or 2012. For personal or small installations, the software is able to run on Windows 7, too
+- Operating System: Windows Server 2008 or upper. For personal or small installations, the software is able to run on Windows 10, too
 - Application Server: IIS 7.0 +. For IIS settings see the installation manual
 - DBMS:
-	- IBM DB2 Express C 10 (version 10.1.2) 32 or 64 bits. BEXIS has not been tested on other versions!
-	- PostgreSQL: (version 9 - 10) 32 or 64 bits. BEXIS has not been tested on other versions!
+	- PostgreSQL: (version 10 - 13) 32 or 64 bits. BEXIS has not been tested on other versions!
 - Dependencies
 	- Microsoft.NET Framework 4.5.2
 	- Microsoft.ASP.NET.MVC 5.2.3
@@ -51,7 +74,7 @@
 	- MediaInfoDotNet.0.7.79.40925
 	- Swashbuckle.5.6.0
 - Disk Space:
-	- The Software: 30-40 MB
+	- The Software: ~300 MB
 	- The Workspace: 10 MB and more, based on the number of modules and the amount of data
 
 

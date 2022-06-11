@@ -163,16 +163,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     //open stream
                                     Stream = reader.Open(Bus[TaskManager.FILEPATH].ToString());
                                     rows = new List<DataTuple>();
-                                    if (reader.Position < excelFileReaderInfo.DataEndRow)
+                                    
+                                    if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
                                     {
-                                        if (iOUtility.IsSupportedExcelFile(Bus[TaskManager.EXTENTION].ToString()))
-                                        {
+                                        if (reader.Position < excelFileReaderInfo.DataEndRow)
                                             rows = reader.ReadFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
-                                        }
-                                        else
-                                        {
-                                            rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
-                                        }
+                                    }
+                                    else
+                                    {
+                                        rows = reader.ReadTemplateFile(Stream, Bus[TaskManager.FILENAME].ToString(), (int)id, packageSize);
                                     }
 
                                     //Debug.WriteLine("ReadFile: " + counter + "  Time " + upload.Elapsed.TotalSeconds.ToString());
@@ -361,7 +360,7 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     ActionType = newdataset ? AuditActionType.Create : AuditActionType.Edit
                                 };
 
-                                setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
+                                workingCopy.Metadata= setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
                                 dm.EditDatasetVersion(workingCopy, null, null, null);
                             }
 
@@ -373,8 +372,8 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                             //send email
                             var es = new EmailService();
-                            es.Send(MessageHelper.GetUpdateDatasetHeader(),
-                                MessageHelper.GetUpdateDatasetMessage(datasetid, title, User.Name),
+                            es.Send(MessageHelper.GetUpdateDatasetHeader(datasetid),
+                                MessageHelper.GetUpdateDatasetMessage(datasetid, title, User.DisplayName, typeof(Dataset).Name),
                                 ConfigurationManager.AppSettings["SystemEmail"]
                                 );
                         }
@@ -401,9 +400,11 @@ namespace BExIS.Modules.Dcm.UI.Helpers
 
                     if (Bus.ContainsKey(TaskManager.DATASTRUCTURE_TYPE) && Bus[TaskManager.DATASTRUCTURE_TYPE].Equals(DataStructureType.Unstructured))
                     {
+
                         // checkout the dataset, apply the changes, and check it in.
                         if (dm.IsDatasetCheckedOutFor(id, User.Name) || dm.CheckOutDataset(id, User.Name))
                         {
+
                             try
                             {
                                 workingCopy = dm.GetDatasetWorkingCopy(id);
@@ -430,15 +431,24 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                                     SaveFileInContentDiscriptor(workingCopy);
                                 }
 
-                                //set modification
-                                workingCopy.ModificationInfo = new EntityAuditInfo()
+                                if(Bus.ContainsKey(TaskManager.DATASET_STATUS))
                                 {
-                                    Performer = User.Name,
-                                    Comment = "File",
-                                    ActionType = AuditActionType.Create
-                                };
+                                    bool newdataset = Bus[TaskManager.DATASET_STATUS].ToString().Equals("new");
+                                    int v = 1;
+                                    if (workingCopy.Dataset.Versions != null && workingCopy.Dataset.Versions.Count > 1) v = workingCopy.Dataset.Versions.Count();
 
-                                dm.EditDatasetVersion(workingCopy, null, null, null);
+                                    //set modification
+                                    workingCopy.ModificationInfo = new EntityAuditInfo()
+                                    {
+                                        Performer = User.Name,
+                                        Comment = "File",
+                                        ActionType = AuditActionType.Create
+                                    };
+
+                                    workingCopy.Metadata = setSystemValuesToMetadata(id, v, workingCopy.Dataset.MetadataStructure.Id, workingCopy.Metadata, newdataset);
+
+                                    dm.EditDatasetVersion(workingCopy, null, null, null);
+                                }
 
                                 //filename
                                 string filename = "";
@@ -478,7 +488,13 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             {
                 temp.Add(new Error(ErrorType.Dataset, ex.Message));
 
-                dm.CheckInDataset(id, "no update on data tuples", User.Name, ViewCreationBehavior.None);
+                //When a exception is happen, may the dataset is checkedout
+                // 
+                if (!dm.IsDatasetCheckedIn(id))
+                {
+                    // revert last changed and checkin without a new version
+                    dm.UndoCheckoutDataset(id, User.Name, ViewCreationBehavior.None);
+                }
             }
             finally
             {
@@ -501,6 +517,15 @@ namespace BExIS.Modules.Dcm.UI.Helpers
                             MessageHelper.GetASyncFinishUploadMessage(id, title, numberOfRows,numberOfSkippedRows),
                             new List<string> { user.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] });
                     }
+                }
+
+                if (Bus.ContainsKey(TaskManager.FILENAME))
+                {
+                    var user = User;
+                    var es = new EmailService();
+                    es.Send(MessageHelper.GeFileUpdatHeader(id),
+                        MessageHelper.GetFileUploaddMessage(id, user.Name, Bus[TaskManager.FILENAME]?.ToString()),
+                        new List<string> { user.Email }, null, new List<string> { ConfigurationManager.AppSettings["SystemEmail"] });
                 }
 
                 dm.Dispose();
@@ -631,9 +656,9 @@ namespace BExIS.Modules.Dcm.UI.Helpers
             else myObjArray = new Key[] { Key.Id, Key.Version, Key.DateOfVersion, Key.DataLastModified };
 
 
-            metadata = SystemMetadataHelper.SetSystemValuesToMetadata(metadataStructureId, version, metadataStructureId, metadata, myObjArray);
+            var metadata_new = SystemMetadataHelper.SetSystemValuesToMetadata(datasetid, version, metadataStructureId, metadata, myObjArray);
 
-            return metadata;
+            return metadata_new;
         }
 
     }

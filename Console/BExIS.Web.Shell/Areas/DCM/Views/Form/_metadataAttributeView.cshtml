@@ -7,7 +7,7 @@
 @{
     string id = Model.Id + "_" + Model.Parent.Id + "_" + Model.Number + "_" + Model.ParentModelNumber + "_" + Model.NumberOfSourceInPackage + "_" + Model.ParentStepId;
     string idByXpath = ((string)ViewData["Xpath"]).Replace("//", "_").Replace('[', '_').Replace(']', '_') + Model.DisplayName + "_" + Model.NumberOfSourceInPackage;  // Replace special character by underscore
-    string xpath = ((string)ViewData["Xpath"]) + "//"+Model.DisplayName+"[1]//" +Model.MetadataAttributeName+"[" + Model.NumberOfSourceInPackage +"]";
+    string xpath = ((string)ViewData["Xpath"]) + "//" + Model.DisplayName + "[1]//" + Model.MetadataAttributeName + "[" + Model.NumberOfSourceInPackage + "]";
     string idInput = id + "_Input";
     string idAdd = id + "_Add";
     string idRemove = id + "_Remove";
@@ -28,6 +28,21 @@
     bool hasSimpleMapping = Model.PartySimpleMappingExist;
     bool hasComplexMapping = Model.PartyComplexMappingExist;
 
+    string partyid = "";
+    if (Model.PartyId != 0)
+    {
+        partyid = Model.PartyId.ToString();
+    }
+    else
+    {
+        if (Model.ParentPartyId != 0)
+        {
+            partyid = Model.ParentPartyId.ToString();
+
+        }
+    }
+
+
     // Add before every uppercase word empty space (e.g. LastNameTEST -> Last Name TEST)
     displayName = Regex.Replace(Model.DisplayName, "((?<=[a-z])[A-Z])", " $1");
 
@@ -46,7 +61,7 @@
     displayName = String.Join(" ", wordList);
 
     // Make first char uppercase
-    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);
+    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1).Replace("_", " ");
 
     if (Model.EntityMappingExist)
     {
@@ -177,7 +192,8 @@
                                 else
                                 {
                                     //Attention: leave the below code in one line to avoid a leading emtpy line
-                                    <div class="bx-metadataForm-textArea-display">@if (Model.Value != null){@Html.DisplayWithLinksFor(m => m.Value)}</div>
+                                    <div class="bx-metadataForm-textArea-display">@if (Model.Value != null)
+                                    {@Html.DisplayWithLinksFor(m => m.Value)}</div>
                                 }
                             }
 
@@ -199,20 +215,48 @@
                                         value = @Model.Value.ToString();
                                     }
 
+                                    // show info text on top (simple is optional / complex mandatory)
+                                    if ((@hasSimpleMapping) && Model.PartyMappingExist && Model.MappingSelectionField)
+                                    {
+                                        <div style="color: gray">If possible, use an entry from autocomplete list.</div>
+                                    }
 
-                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp = "OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath">
+                                    if ((hasComplexMapping) && Model.PartyMappingExist && Model.MappingSelectionField)
+                                    {
+                                        <div style="color: gray">Use an entry from autocomplete list.</div>
+                                    }
+
+                                    <input class="t-widget t-autocomplete t-input bx-metadataFormTextInput  @errorClass" complex="@hasComplexMapping.ToString()" id="@idInput" idbyxpath="@idByXpath" onKeyUp="OnKeyUpTextInput(this)" name="@idInput" simple="@hasSimpleMapping.ToString()" partyid="@partyid" test="@Model.Id" title="" type="@autoCompleteType" value="@value" xpath="@xpath">
+
+                                    // add icons to show linked / not linked party entries; hide both by default
+                                    var notLinkedID = @idInput + "_notLinked";
+                                    var linkedID = @idInput + "_linked";
+                                    <span id="@notLinkedID" style="display: none; font-size: 1em; color: Tomato;" title="Entry is not linked! Please type and use an entry from the list if available."><i class="fa fa-times-circle"></i></span>
+                                    <span id="@linkedID" style="display: none; font-size: 1em; color: green;" title="Entry is linked."><i class="fa fa-check-circle"></i></span>
+
+                                    // show not linked, when on any content, but not linked
+                                    if ((@hasSimpleMapping || hasComplexMapping) && Model.MappingSelectionField && Model.PartyMappingExist && partyid == "" && Model.Value != null)
+                                    {
+                                        <script type="text/javascript">$("#@notLinkedID").show()</script>
+                                    }
+                                    // show linked, when a party id is selected
+                                    else if ((@hasSimpleMapping || hasComplexMapping) && Model.MappingSelectionField && Model.PartyMappingExist && partyid != "" && Model.Value != null)
+                                    {
+                                        <script type="text/javascript">$("#@linkedID").show()</script>
+                                    }
+
                                     <style>
                                         .ui-autocomplete-loading {
                                             background: white url("../../Images/ui-anim_basic_16x16.gif") right center no-repeat;
                                         }
                                     </style>
-                                  
+
                                     <script type="text/javascript">
                                         $( function() {
                                         var cache = {};
                                         $( "#@idInput" ).autocomplete({
 
-                                        minLength: 3,
+                                        minLength: 1,
                                         delay: 300, // this is in milliseconds
                                         change: function (event, ui) { OnChangeTextInput(event, ui); },
                                         select: function (event, ui) { OnClose(event, ui); },
@@ -244,10 +288,10 @@
                                                     console.log(data);
 
                                                     var list = [];
-                                                    for (i = 0; i < data.length; i++) { 
-                                                        list.push(data[i]["Text"]);                    
+                                                    for (i = 0; i < data.length; i++) {
+                                                        list.push(data[i]["Text"]);
                                                     }
-                
+
                                                     cache[ term ] = list;
                                                     response(list);
 
@@ -258,7 +302,7 @@
                                      });
                                     </script>
 
-                               
+
 
                                 }
                                 else
@@ -275,19 +319,26 @@
                             {
                                 //@Html.TextBoxFor(m => m.Value, new {disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass})
 
-                                <div class="bx-input bx-metadataFormTextInput  bx-disabled" style="padding-top: 4px;">
-                                    @if (Model.Value != null)
-                                    {
-                                        if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
-                                        {
-                                            <a href="@Model.EntityUrl" target="_blank">@Model.Value</a>
-                                        }
-                                        else
-                                        {
-                                            @Html.DisplayWithLinksFor(m => m.Value)
-                                        }
-                                    }
-                                </div>
+                <div class="bx-input bx-metadataFormTextInput  bx-disabled" style="padding-top: 4px;">
+                    @if (Model.Value != null)
+                    {
+                        if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
+                        {
+                            <a href="@Model.EntityUrl" target="_blank">@Model.Value</a>
+                        }
+                        else if (displayName == "Email")
+                        {
+                            string value = Model.Value.ToString();
+                            string[] email_parts = value.Split('@');
+                            value = String.Join("<span>werwe</span>", email_parts);
+                            @email_parts[0]<span>&#x40;</span><!--<span>werwe</span>-->@email_parts[1]
+                        }
+                        else
+                        {
+                            @Html.DisplayWithLinksFor(m => m.Value)
+                        }
+                    }
+                </div>
 
                             }
 

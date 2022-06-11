@@ -28,7 +28,7 @@
             extends="./menubarRoot" />-->
 
     <Export tag="menubar" id="dashboard" order="1"
-        title="Dashboard" description="Quick Access to User Area" icon=""
+        title="My Data" description="Quick Access to User Area" icon=""
         controller="dashboard" action="index"
         extends="./menubarRoot" />
 
@@ -46,7 +46,7 @@
 
     <Export tag="internalApi" id="publicsearch"
             title="Public Search" description="public search" icon=""
-            controller="PublicSearch" action="Index"
+            controller="home" action=""
             extends="" />
 
     <Export tag="internalApi" id="showData"
@@ -82,5 +82,7 @@
 
   <EntityActions>
     <EntityAction id="showDataset" entity="dataset" controller="data" action="Showdata" area="DDM" modus="show" />
+    <EntityAction id="uploadDataset" entity="dataset" controller="Submit" action="Upload" area="DCM" modus="upload" />
   </EntityActions>
+	
 </Manifest>

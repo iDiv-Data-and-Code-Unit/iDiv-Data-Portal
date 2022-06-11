@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Web.Mvc;
 using BExIS.Dlm.Entities.DataStructure;
 using BExIS.Dlm.Services.DataStructure;
@@ -15,6 +16,11 @@ using Vaiona.Persistence.Api;
 using Vaiona.Logging;
 using Vaiona.Web.Mvc;
 using BExIS.Dlm.Services.TypeSystem;
+using BExIS.Security.Services.Authorization;
+using BExIS.Security.Services.Objects;
+using BExIS.Security.Services.Subjects;
+using System.Xml;
+using System.IO;
 
 namespace BExIS.Modules.Rpm.UI.Controllers
 {
@@ -42,6 +48,26 @@ namespace BExIS.Modules.Rpm.UI.Controllers
 
         public ActionResult _attributeResultBinding()
         {
+            ViewData["showCreateVariableTemplate"] = false;
+            
+            XmlDocument settings = new XmlDocument();
+            string filePath = Path.Combine(AppConfiguration.GetModuleWorkspacePath("RPM"), "Rpm.Settings.xml");
+            settings.Load(filePath);
+            XmlNode show = settings.GetElementsByTagName("showCreateVariableTemplate")[0];
+            var showButton = true;
+            
+            // check for settings
+            if (show != null)
+            {
+                showButton = Convert.ToBoolean(show.InnerText);
+            }
+
+            // show "Create Variable Template" button if settings true or not set and permission are true
+            if (showButton && checkPermission(new Tuple<string, string, string>("RPM", "DataAttribute", "AttributeManager")))
+            {
+                ViewData["showCreateVariableTemplate"] = true;
+            }
+
             return PartialView("_attributeSearchResult", new AttributePreviewModel().fill());
         }
 
@@ -82,7 +108,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 {
                     missingValueManager = new MissingValueManager();
                     MissingValue missingValue = missingValueManager.Repo.Get(missinValueId);
-                    if(missingValue == null)
+                    if (missingValue == null)
                     {
                         return null;
                     }
@@ -132,7 +158,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             {
                 missingValueManager = new MissingValueManager();
                 List<MissingValue> missingValues = missingValueManager.Repo.Query(mv => mv.Variable.Id.Equals(variableId)).ToList();
-                foreach(MissingValue mv in missingValues)
+                foreach (MissingValue mv in missingValues)
                 {
                     if (mv.DisplayName == missingValue.DisplayName && mv.Id != missingValue.Id)
                         return false;
@@ -148,13 +174,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
         [HttpPost]
         public bool _checkMissingValuePlaceholder(long variableId, MissingValueStruct missingValue)
         {
-            MissingValueManager missingValueManager = null;
-            DataStructureManager dataStructureManager = null;
-
-            try
+            using (MissingValueManager missingValueManager = new MissingValueManager())
+            using (DataStructureManager dataStructureManager = new DataStructureManager())
             {
-                missingValueManager = new MissingValueManager();
-                dataStructureManager = new DataStructureManager();
 
                 Variable variable = dataStructureManager.VariableRepo.Get(variableId);
                 TypeCode typecode = new TypeCode();
@@ -168,10 +190,6 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     }
                 }
                 return missingValueManager.ValidatePlaceholder(typecode, missingValue.Placeholder, missingValue.Id);
-            }
-            finally
-            {
-                missingValueManager.Dispose();
             }
         }
 
@@ -195,7 +213,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                     StructuredDataStructure structuredDataStructure = structureRepo.Get(Id);
 
                     if (structuredDataStructure != null) // Javad: This one retrieves the entity withough using it, and then the next line agian fetches the same! 
-                    {                 
+                    {
                         DataStructureIO.deleteTemplate(structuredDataStructure.Id);
                         foreach (Variable v in structuredDataStructure.Variables)
                         {
@@ -238,6 +256,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             DataContainerManager dataContainerManager = null;
             MissingValueManager missingValueManager = null;
             UnitManager um = null;
+            StructuredDataStructure dataStructure = null;
 
             try
             {
@@ -245,9 +264,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                 missingValueManager = new MissingValueManager();
                 dataContainerManager = new DataContainerManager();
                 um = new UnitManager();
-                var structureRepo = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>();
 
-                StructuredDataStructure dataStructure = structureRepo.Get(Id);
+                dataStructure = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(Id);
                 MessageModel returnObject = new MessageModel();
                 MessageModel messageModel = MessageModel.validateDataStructureInUse(dataStructure.Id, dataStructure);
                 if (messageModel.hasMessage)
@@ -257,9 +275,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         if (variables.Select(svs => svs.Id).ToList().Contains(v.Id))
                         {
                             v.Description = variables.Where(svs => svs.Id == v.Id).FirstOrDefault().Description;
-                            dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
                         }
                     }
+
+                    dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
+
+
                     return PartialView("_messageWindow", messageModel);
                 }
 
@@ -278,6 +299,8 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                 missingValueManager.Delete(mv);
                             }
                             dataStructureManager.RemoveVariableUsage(v);
+                            dataStructure.Variables.Remove(v);
+
                         }
                     }
 
@@ -293,7 +316,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         {
                             variable = dataStructureManager.AddVariableUsage(dataStructure, dataAttribute, svs.isOptional, svs.Lable.Trim(), null, null, svs.Description.Trim(), um.Repo.Get(svs.UnitId));
                             svs.Id = variable.Id;
-                            foreach(MissingValueStruct mvs in svs.MissingValues)
+                            foreach (MissingValueStruct mvs in svs.MissingValues)
                             {
                                 if (mvs.Id == 0)
                                 {
@@ -315,7 +338,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         }
                     }
 
-                    //dataStructure = structureRepo.Get(Id); // Javad: why it is needed?
+                    //dataStructure = dataStructureManager.GetUnitOfWork().GetReadOnlyRepository<StructuredDataStructure>().Get(Id); // Javad: why it is needed?
 
                     variables = variables.Where(v => v.Id != 0).ToArray();
                     MissingValue missingValue = new MissingValue();
@@ -330,12 +353,12 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         if (variable != null)
                         {
                             variable.Label = svs.Lable.Trim();
-                            variable.Description = svs.Description.Trim();                            
+                            variable.Description = svs.Description.Trim();
                             variable.Unit = um.Repo.Get(svs.UnitId);
                             variable.DataAttribute = dataContainerManager.DataAttributeRepo.Get(svs.AttributeId);
                             variable.IsValueOptional = svs.isOptional;
 
-                            
+
                             List<MissingValue> missingValues = missingValueManager.Repo.Query(mv => mv.Variable.Id.Equals(svs.Id)).ToList();
                             foreach (MissingValue mv in missingValues)
                             {
@@ -364,13 +387,10 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                                         missingValue.Placeholder = mvs.Placeholder;
                                         missingValueManager.Update(missingValue);
                                     }
-                                }                  
+                                }
                             }
                         }
                     }
-
-                    dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
-                    DataStructureIO.setVariableOrder(dataStructure, variables.Select(svs => svs.Id).ToList());
                 }
                 else
                 {
@@ -384,6 +404,9 @@ namespace BExIS.Modules.Rpm.UI.Controllers
                         dataStructureManager.RemoveVariableUsage(v);
                     }
                 }
+                dataStructure = DataStructureIO.setVariableOrder(dataStructure, variables.Select(svs => svs.Id).ToList());
+                dataStructure = dataStructureManager.UpdateStructuredDataStructure(dataStructure);
+
                 LoggerFactory.LogCustom("Variables for Data Structure " + Id + " stored.");
                 return Json(returnObject, JsonRequestBehavior.AllowGet);
             }
@@ -433,7 +456,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             }
         }
 
-        public ActionResult getMessageWindow(string message,bool hasMessage, string cssId)
+        public ActionResult getMessageWindow(string message, bool hasMessage, string cssId)
         {
             message = Server.UrlDecode(message);
             return PartialView("_messageWindow", new MessageModel()
@@ -723,7 +746,7 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             finally
             {
                 dcManager.Dispose();
-            }      
+            }
         }
 
         [HttpPost]
@@ -806,6 +829,49 @@ namespace BExIS.Modules.Rpm.UI.Controllers
             finally
             {
                 dcManager.Dispose();
+            }
+        }
+
+        protected bool checkPermission(Tuple<string, string, string> Feature)
+        {
+            var featurePermissionManager = new FeaturePermissionManager();
+            var operationManager = new OperationManager();
+            var userManager = new UserManager();
+
+            try
+            {
+
+                var areaName = Feature.Item1;
+                if (areaName == "")
+                {
+                    areaName = "shell";
+                }
+                var controllerName = Feature.Item2;
+                var actionName = Feature.Item3;
+
+                var userName = HttpContext.User?.Identity?.Name;
+                var operation = operationManager.Find(areaName, controllerName, "*");
+
+                var feature = operation.Feature;
+                if (feature == null) return true;
+
+                var result = userManager.FindByNameAsync(userName);
+
+
+                if (featurePermissionManager.HasAccess(result.Result?.Id, feature.Id))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            finally
+            {
+                featurePermissionManager.Dispose();
+                operationManager.Dispose();
+                userManager.Dispose();
             }
         }
     }

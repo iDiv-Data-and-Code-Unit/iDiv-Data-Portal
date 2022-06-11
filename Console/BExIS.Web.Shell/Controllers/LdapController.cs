@@ -27,7 +27,7 @@ namespace BExIS.Web.Shell.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-            var ldapAuthenticationManager = new LdapAuthenticationManager(ConfigurationManager.AppSettings["Ldap_ConnectionString"]);
+            var ldapAuthenticationManager = new LdapAuthenticationManager();
             var userManager = new UserManager();
             var signInManager = new SignInManager(AuthenticationManager);
             var identityUserService = new IdentityUserService();
@@ -95,6 +95,7 @@ namespace BExIS.Web.Shell.Controllers
                 ldapAuthenticationManager.Dispose();
                 userManager.Dispose();
                 signInManager.Dispose();
+                identityUserService.Dispose();
             }
         }
 
@@ -117,7 +118,7 @@ namespace BExIS.Web.Shell.Controllers
                 {
                     if (user.Logins.Any(l => l.LoginProvider == "Ldap"))
                     {
-                        user.HasPrivacyPolicyAccepted = model.PrivacyPolicy;
+                        //user.HasPrivacyPolicyAccepted = model.PrivacyPolicy;
                         user.HasTermsAndConditionsAccepted = model.TermsAndConditions;
                         user.Email = model.Email;
 
@@ -142,6 +143,7 @@ namespace BExIS.Web.Shell.Controllers
             finally
             {
                 userManager.Dispose();
+                identityUserService.Dispose();
             }
         }
 

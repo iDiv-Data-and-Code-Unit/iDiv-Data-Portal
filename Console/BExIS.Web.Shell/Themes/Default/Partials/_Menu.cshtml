@@ -13,7 +13,14 @@
 
 }
 
-<div class="navbar navbar-default navbar-fixed-top" style="z-index: 1337">
+<div class="navbar navbar-default navbar-fixed-top" style="z-index: 1000">
+    <img src="@Url.Content("~/Content/Images/topRainbow.jpg")" style="position: absolute; top: 0px; right: 0px; left: 0px; width: 100%; height: 5px" />
+    <table class="navbarbanner" style="background:none; width:100%; border-bottom:solid 1px #ABABAB;">
+        <tr style="background:none;">
+            <td style="background:none; border:0px none; width:200px"><a href="https:\\www.idiv.de" target="blank"><img src="@Url.Content("~/Content/Images/logo.png")" style="margin:15px 0px 10px 20px;" /></a></td>
+            <td style="width:calc(100% - 200px);display:inline-block; background:none; border:0px none; padding-top:35px; color:#000; text-align:center;"><b>German Centre for Integrative Biodiversity Research (iDiv) Halle-Jena-Leipzig</b></td>
+        </tr>
+    </table>
     <div class="container-fluid" id="menubar" style="background-color: #eff7f6">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -23,14 +30,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="@Url.Action("Index", "Home", new {area = ""})" class="navbar-brand">
-                @Html.Brand(Html.GetTenant().LogoPath, Html.GetTenant().ShortName)
-            </a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
             @*menubar*@
             <ul class="nav navbar-nav">
+                <li>
+                    <a href="@Url.Action("Index", "Home", new {area = ""})" class="navbar-brand">Home</a>
+                </li>
                 @Html.MenuBar(userName)
             </ul>
 

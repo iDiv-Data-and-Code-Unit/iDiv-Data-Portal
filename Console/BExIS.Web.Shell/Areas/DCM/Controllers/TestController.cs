@@ -14,6 +14,8 @@ using System.Web.Mvc;
 
 namespace BExIS.Modules.Dcm.UI.Controllers
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Objekte verwerfen, bevor Bereich verloren geht", Justification = "<Ausstehend>")]
+
     public class TestController : Controller
     {
         // GET: Test
@@ -22,8 +24,8 @@ namespace BExIS.Modules.Dcm.UI.Controllers
             var es = new EmailService();
             var datasetId = 1;
             var title = "my cool dataset";
-            es.Send(MessageHelper.GetCreateDatasetHeader(),
-                MessageHelper.GetCreateDatasetMessage(datasetId, title, "David Schöne"),
+            es.Send(MessageHelper.GetCreateDatasetHeader(datasetId, "Dataset"),
+                MessageHelper.GetCreateDatasetMessage(datasetId, title, "David Schöne", "Dataset"),
                 ConfigurationManager.AppSettings["SystemEmail"]
                 );
 

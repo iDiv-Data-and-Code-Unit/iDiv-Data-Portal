@@ -299,7 +299,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                 }
 
 
-                List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), "Dataset",
+                List<long> datasetIds = entityPermissionManager.GetKeys(GetUsernameOrDefault(), entityname,
                        typeof(Dataset), rightTypeId);
 
                 List<DatasetVersion> datasetVersions = datasetManager.GetDatasetLatestVersions(datasetIds, true);
@@ -358,6 +358,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
             }
             else
             {
+                ViewBag.entityname = entityname;
                 return PartialView("_myDatasetsViewHeader", model);
             }
 
@@ -640,43 +641,5 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
         #endregion mydatasets
 
-        #region requests & decisions
-
-        /// <summary>
-        /// load requests of a entity type & user
-        /// </summary>
-        /// <param name="id">Id of a entity type</param>
-        /// <returns></returns>
-        public ActionResult Requests(long id)
-        {
-            if (this.IsAccessible("SAM", "Requests", "Requests"))
-            {
-                var view = this.Render("SAM", "Requests", "Requests", new RouteValueDictionary()
-                {
-                    { "entityId", id }
-                });
-
-                return Content(view.ToHtmlString(), "text/html");
-            }
-
-            return PartialView("Error"); ;
-        }
-
-        public ActionResult Decisions(long id)
-        {
-            if (this.IsAccessible("SAM", "Requests", "Decisions"))
-            {
-                var view = this.Render("SAM", "Requests", "Decisions", new RouteValueDictionary()
-                {
-                    { "entityId", id }
-                });
-
-                return Content(view.ToHtmlString(), "text/html");
-            }
-
-            return PartialView("Error"); ;
-        }
-
-        #endregion requests & decisions
     }
 }

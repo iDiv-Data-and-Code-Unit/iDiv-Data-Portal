@@ -10,30 +10,32 @@
     <!--<Dependency moduleId="dcm" version="*.*.*" />-->
   </Dependencies>
   <Exports>
-    <Export tag="menubar" id="ManageDataStructures" order="1"
-            title="Manage Data Structures" description="Edit, Create or Delet Data Structures" icon=""
-            controller="DataStructureSearch" action="" argument=""
-            extends="./menubarRoot/Plan"/>
+
     <Export tag="menubar" id="ManageUnits" order="2"
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
             controller="Unit" action="" argument=""
-            extends="./menubarRoot/Plan"/>
-    
-    <Export tag="lunchbar" id="helpRpm" order="1"
-        title="Data Planning" description="Data Planning Help Manual" icon=""
+            extends="./settingsRoot"/>
+
+    <Export tag="lunchbar" id="helpRpm" order="4"
+        title="Data Structure" description="Data Planning Help Manual" icon=""
         controller="Help" action="index"
         extends="./lunchbarRoot/help"
             />
-    
-    <Export tag="settings" id="ManageVariableTemplates" order="1"
+
+    <Export tag="settings" id="ManageDataStructures" order="1"
+              title="Manage Data Structures" description="Edit, Create or Delete Data Structures" icon=""
+              controller="DataStructureSearch" action="" argument=""
+              extends="./settingsRoot"/>
+
+    <Export tag="settings" id="ManageVariableTemplates" order="2"
             title="Manage Variable Templates" description="Edit, Create or Delet Variable Templates" icon=""
             controller="DataAttribute" action="AttributeManager" argument=""
             extends="./settingsRoot" />
-    <Export tag="settings" id="ManageUnits" order="2"
+    <Export tag="settings" id="ManageUnits" order="3"
             title="Manage Units" description="Edit, Create or Delet Units" icon=""
             controller="Unit" action="UnitManager" argument=""
             extends="./settingsRoot" />
-    <Export tag="settings" id="ManageDataTypes" order="3"
+    <Export tag="settings" id="ManageDataTypes" order="4"
             title="Manage Data Types" description="Edit, Create or Delet Data Types" icon=""
             controller="Home" action="DataTypeManager" argument=""
             extends="./settingsRoot" />

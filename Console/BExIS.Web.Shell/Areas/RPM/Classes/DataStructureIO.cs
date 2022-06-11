@@ -3,6 +3,7 @@ using BExIS.Dlm.Services.DataStructure;
 using BExIS.IO.Transform.Output;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml;
 
@@ -18,59 +19,65 @@ namespace BExIS.Modules.Rpm.UI.Classes
 
         private static XmlDocument createOderNode(StructuredDataStructure structuredDataStructure)
         {
-            DataStructureManager dsm = new DataStructureManager();
-            XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
-            XmlNode order;
-
-            if (doc == null)
+            using (DataStructureManager dsm = new DataStructureManager())
             {
-                doc = new XmlDocument();
-                XmlNode root = doc.CreateNode(XmlNodeType.Element, "extra", null);
-                doc.AppendChild(root);
-            }
-            if (doc.GetElementsByTagName("order").Count == 0)
-            {
+                XmlDocument doc = (XmlDocument)structuredDataStructure.Extra;
+                XmlNode order;
 
-                if (structuredDataStructure.Variables.Count > 0)
+                if (doc == null)
                 {
-                    order = doc.CreateNode(XmlNodeType.Element, "order", null);
-
-                    foreach (Variable v in structuredDataStructure.Variables)
-                    {
-
-                        XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
-                        variable.InnerText = v.Id.ToString();
-                        order.AppendChild(variable);
-                    }
-
-                    doc.FirstChild.AppendChild(order);
-                    structuredDataStructure.Extra = doc;
-                    dsm.UpdateStructuredDataStructure(structuredDataStructure);
+                    doc = new XmlDocument();
+                    XmlNode root = doc.CreateNode(XmlNodeType.Element, "extra", null);
+                    doc.AppendChild(root);
                 }
+                if (doc.GetElementsByTagName("order").Count == 0)
+                {
+
+                    if (structuredDataStructure.Variables.Count > 0)
+                    {
+                        order = doc.CreateNode(XmlNodeType.Element, "order", null);
+
+                        foreach (Variable v in structuredDataStructure.Variables)
+                        {
+
+                            XmlNode variable = doc.CreateNode(XmlNodeType.Element, "variable", null);
+                            variable.InnerText = v.Id.ToString();
+                            order.AppendChild(variable);
+                        }
+
+                        doc.FirstChild.AppendChild(order);
+                        structuredDataStructure.Extra = doc;
+                        dsm.UpdateStructuredDataStructure(structuredDataStructure);
+                    }
+                }
+                return doc;
             }
-            return doc;
         }
         public static List<Variable> getOrderedVariables(StructuredDataStructure structuredDataStructure)
         {
             return structuredDataStructure.Variables.OrderBy(v => v.OrderNo).ToList();
+            
         }
-        public static StructuredDataStructure setVariableOrder(StructuredDataStructure structuredDataStructure, List<long> orderList)
+        public static StructuredDataStructure setVariableOrder(StructuredDataStructure dataStructure, List<long> orderList)
         {
             DataStructureManager dsm = null;
             try
             {
                 dsm = new DataStructureManager();
-                foreach (Variable v in structuredDataStructure.Variables)
+                if(orderList != null && orderList.Count > 0)
                 {
-                    v.OrderNo = orderList.IndexOf(v.Id) + 1;
+                    foreach (Variable v in dataStructure.Variables)
+                    {
+                        v.OrderNo = orderList.IndexOf(v.Id) + 1;
+                        Debug.WriteLine(v.Id + "|" + v.OrderNo);
+                    }
                 }
-                structuredDataStructure = dsm.UpdateStructuredDataStructure(structuredDataStructure);
+                return dsm.UpdateStructuredDataStructure(dataStructure);
             }
             finally
             {
                 dsm.Dispose();
-            }
-            return structuredDataStructure;
+            }          
         }
 
         public static void convertOrder(StructuredDataStructure structuredDataStructure)

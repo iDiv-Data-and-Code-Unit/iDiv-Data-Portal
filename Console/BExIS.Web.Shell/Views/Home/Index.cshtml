@@ -9,11 +9,156 @@
     <p>This is a community driven open source project so we are looking forward to any feedback or inquiry about new features.</p>
 }
 
-<div style="text-align: center;">
-    @Html.Logo(Html.GetTenant().GetResourcePath("BigLogo"))
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<!-- Animate css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.css">
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.4.2/css/all.css' integrity='sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns' crossorigin='anonymous'>
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/css/custom.css")" />
+
+<script type="text/javascript">
+    $('.container-fluid#content-container table').css({ 'border': '0px none' });
+    $('.container-fluid#content-container td').css({ 'border-top': '0px none', 'padding': '0px', 'border-right': '0px none' });
+    $('.container-fluid#content-container').css({ 'margin': '0px', 'padding': '0px' });
+</script>
+
+<div class="page clearfix" id="page">
+    <header id="header-main" class="home-main-banner">
+        <div class="header-main-banner">
+            <img src="@Url.Content("~/Content/Images/banner3.jpg")">
+        </div>
+        <div class="header-main-overlay"></div>
+        <!-- BEGIN TOP SECTION -->
+        <div id="home" class="top-main">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12 col-md-7">
+                        <div class="top-main-info">
+                            <div class="wow ">
+                                <h2>Data Repository</h2>
+                                <p>
+                                    The central mission of the Data Repository is to support data management activities of iDiv researchers based on <a href="https://www.force11.org/group/fairgroup/fairprinciples" target="_blank" style="color:white"</a> <b><u>F.A.I.R</u></b> Data Principles.</br></br>
+                                    You are welcome to access and download publicly available datasets, without registering as a user.
+                                    Registration is only required for data upload and is limited to iDiv-affiliated researchers.</>
 </div>
-<div style="text-align: center; margin-top: 24pt">
-   
-    @Html.ActionLink("Register", "Register", "Account", new { area = "" }, htmlAttributes: new { @class = "t-button function", id = "registerLink" })
-    @Html.ActionLink("Login", "Login", "Account", new { area = "" }, htmlAttributes: new { @class = "t-button function", id = "loginLink" })
+                            <div class="wow">
+                                @Html.ActionLink("Login", "Login", "Account", new { area = "" }, htmlAttributes: new { @class = "btn btn-lg btn-info", id = "loginLink" })
+                                @Html.ActionLink("Register", "Register", "Account", new { area = "" }, htmlAttributes: new { @class = "btn btn-lg btn-info", id = "registerLink" })
+                                @*<a href="http://data.idiv.de:8080/ipt/user.do"><button class="btn btn-lg btn-info">Login</button></a>
+                                    <a href="http://data.idiv.de:8080/ipt/user.do"><button class="btn btn-lg btn-info">Register</button></a>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END TOP SECTION -->
+    </header>
+    <main id="main">
+        <!-- BEGIN ABOUT SECTION -->
+        <div class="container options">
+            <div class="row">
+                <a href="~/ddm/home">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" style="text-align: center;">
+                        <div class="about">
+                            <i class="fas fa-search fa-3x"></i>
+                            <h2>Search</h2>
+                        </div>
+                    </div>
+                </a>
+                <a href="~/dcm/EasyUpload/UploadWizard">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s" style="text-align: center;">
+                        <div class="about">
+                            <i class="fas fa-table fa-3x"></i>
+                            <h2>Easy Upload</h2>
+                            <p>(Spreadsheets)</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="~/dcm/CreateDataset">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+                        <div class="about">
+                            <i class="fas fa-file-upload fa-3x"></i>
+                            <h2>Easy Upload</h2>
+                            <p>(Data files)</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="~/dcm/CreateDataset">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.7s" style="text-align: center;">
+                        <div class="about">
+                            <i class="fas fa-file-alt fa-3x"></i>
+                            <h2>Submit Metadata</h2>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://ibid-support.idiv.de/osTicket/" target="_blank">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.9s" style="text-align: center;">
+                        <div class="about">
+                            <i class="fas fa-hands-helping fa-3x"></i>
+                            <h2>Need Help?</h2>
+                        </div>
+                    </div>
+                </a>
+                <a style="color:#777; cursor:not-allowed;">
+                    <div class="col-md-2 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="1.1s" style="text-align: center;">
+                        <div class="about">
+                            <b class="fas fa-3x">DOI</b>
+                            <h2>Get DOI</h2>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <section id="about" class="section-padding">
+            <div class="headline text-center">
+                <h3>about</h3>
+                <p>To promote theory-driven synthesis and data-driven theory, efficient management of data and information ranging from molecular to global scale is required. In accordance with the <a href="http://www.dfg.de/download/pdf/foerderung/antragstellung/forschungsdaten/guidelines_biodiversity_research.pdf" target="_blank"><b>DFG research</b></a> data handling guidelines for biodiversity research, the Biodiversity Informatics Unit (BDU) have installed a data repository for biodiversity and ecological data. The central role of the repository is to allow iDiv researchers to manage, describe, share, store and preserve biodiversity and ecology data, based on the Find, Accessible, Interoperable and Reusable (FAIR) data management principles and showcase intellectual output of iDiv.</p>
+                <p>Some of the unique features of the repository are Easy Upload workflow for structured data, Generic Minimum Information Metadata writing tool, Easy Mapping of variables with data standards such as DarwinCore (DwC) and Ecological Metadata Language (EML).The data from this repository is been made available as per the rules and regulations set in <a href="~/footer/policy"><b>iDiv data sharing and access policy</b></a>. For quick information, we recommend you to visit the<a href="~/idiv/Content/FAQ"><b> FAQ section</b></a> .</p>
+                <p>For more information regarding the submission of data or in case you have questions or need support and guidance for conducting data management activities, please contact us via the Biodiversity Informatics Unit (BDU)<a href="https://ibid-support.idiv.de/osTicket/" target="_blank"><b> ticketing system</b></a>. Please also use the ticketing system to report bugs and technical issues and to provide your valuable suggestions and feedbacks.</p>
+            </div>
+            <div class="container options">
+                <div class="row">
+                    <a href="~/idiv/Content/Databases">
+                        <div class="col-md-3 col-sm-6 wow fadeIn" data-wow-duration="1s" style="text-align: center;">
+                            <div class="about">
+                                <i class="fas fa-database fa-3x"></i>
+                                <h2>Resources</h2>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="~/idiv/Content/FAQ">
+                        <div class="col-md-3 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.2s" style="text-align: center;">
+                            <div class="about">
+                                <i class="fas fa-question fa-3x"></i>
+                                <h2>FAQs</h2>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="~/footer/contactus">
+                        <div class="col-md-3 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s" style="text-align: center;">
+                            <div class="about">
+                                <i class="far fa-comment-dots fa-3x"></i>
+                                <h2>Contact Us</h2>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="~/idiv/Content/QuickGuide">
+                        <div class="col-md-3 col-sm-6 wow fadeIn" data-wow-duration="1s" data-wow-delay="0.7s" style="text-align: center;">
+                            <div class="about">
+                                <i class="fas fa-hands-helping fa-3x"></i>
+                                <h2>Quick Guide</h2>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <!-- END ABOUT SECTION -->
+    </main>
 </div>
+
+<div id="modalbox"><div id="modalback"></div><div id="modalcontainer"><div id="modalcontent"></div></div></div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.js"></script>
+<!-- Custom JavaScript -->
+<script type="text/javascript" src="@Url.Content("~/Scripts/custom.js")"></script>

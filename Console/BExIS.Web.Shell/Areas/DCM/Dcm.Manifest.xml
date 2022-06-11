@@ -21,28 +21,28 @@
             extends="./settingsRoot" />
 
     <Export tag="menubar" id="collect" order="1"
-            title="Collect" description="Quick access to Data Collection Area" icon=""
+            title="Upload Data" description="Submit Data" icon=""
             controller="" action=""
             extends="./menubarRoot" />
     <Export tag="menubar" id="createDataset" order="1"
             title="Create Dataset" description="Create new Dataset" icon=""
             controller="CreateDataset" action="index"
             extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="uploaddata" order="2"
-            title="Upload Data" description="Upload data to a dataset" icon=""
+    <Export tag="menubar" id="uploaddata" order="3"
+            title="Update Dataset" description="Upload data to a dataset" icon=""
             controller="Submit" action="index"
             extends="./menubarRoot/collect" />
-    <Export tag="menubar" id="importdata" order="3"
-            title="Import Data" description="Import datastructure and data from an excel file" icon=""
+   <!-- <Export tag="menubar" id="importdata" order="2"
+            title="Tabular" description="Import datastructure and data from an excel file" icon=""
             controller="EasyUpload" action="index"
-            extends="./menubarRoot/collect" />
+            extends="./menubarRoot/collect" />-->
     <Export tag="menubar" id="createDataset" order="4"
             title="Push Big File" description="Push big file to the server to use it later" icon=""
             controller="Push" action="index"
             extends="./menubarRoot/collect" />
 
-    <Export tag="lunchbar" id="helpDcm" order="1"
-            title="Data Collection" description="Data Collection Help Manual" icon=""
+    <Export tag="lunchbar" id="helpDcm" order="3"
+            title=" Metadata and Data" description="Data Collection Help Manual" icon=""
             controller="help" action="index"
             extends="./lunchbarRoot/help" />
 
@@ -65,6 +65,10 @@
     <Export tag="internalApi" id="SetAdditionalFunctionsToCreateDatasetTaskmanager"
             title="Set additional functions To Create Dataset Taskmanager" description="set functions to the buttons in the form" icon=""
             controller="Form" action="SetAdditionalFunctions"
+            extends="" />
+	<Export tag="internalApi" id="SetCopyFunctionView"
+            title="Set Copy function To Create Dataset Taskmanager" description="set functions to the buttons in the form" icon=""
+            controller="Form" action="SetCopyFunctionForView"
             extends="" />
 
     <Export tag="internalApi" id="StartMetadataEditor"

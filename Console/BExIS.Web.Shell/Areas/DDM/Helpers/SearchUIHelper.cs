@@ -30,18 +30,19 @@ namespace BExIS.Modules.Ddm.UI.Helpers
             if (m != null)
             {
 
-                StringReader stringReader = new StringReader(m);
-                XmlReader xmlReader = XmlReader.Create(stringReader);
+                using (StringReader stringReader = new StringReader(m))
+                using (XmlReader xmlReader = XmlReader.Create(stringReader))
+                using (StringWriter stringWriter = new StringWriter())
+                {
+                    XslCompiledTransform xslt = new XslCompiledTransform(true);
+                    XsltSettings xsltSettings = new XsltSettings(true, false);
+                    xslt.Load(url, xsltSettings, new XmlUrlResolver());
 
-                XslCompiledTransform xslt = new XslCompiledTransform(true);
-                XsltSettings xsltSettings = new XsltSettings(true, false);
-                xslt.Load(url, xsltSettings, new XmlUrlResolver());
+                    XsltArgumentList xsltArgumentList = new XsltArgumentList();
 
-                XsltArgumentList xsltArgumentList = new XsltArgumentList();
-
-                StringWriter stringWriter = new StringWriter();
-                xslt.Transform(xmlReader, xsltArgumentList, stringWriter);
-                return stringWriter.ToString().Replace("bgc:", "");
+                    xslt.Transform(xmlReader, xsltArgumentList, stringWriter);
+                    return stringWriter.ToString().Replace("bgc:", "");
+                }
             }
 
             return "";
@@ -264,7 +265,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                 if (vv.VariableId > 0)
                 {
                     string valueAsString = "";
-                    if (vv.Value == null)
+                    if (vv.Value == "") // check for NULL values
                     {
                         dr["ID" + vv.VariableId.ToString()] = DBNull.Value;
                     }
@@ -430,7 +431,7 @@ namespace BExIS.Modules.Ddm.UI.Helpers
                             dr["Description"] = "n/a";
 
                         if (sdvu.Unit != null)
-                            dr["Unit"] = sdvu.Unit.Name;
+                            dr["Unit"] = sdvu.Unit.Abbreviation;
                         else
                             dr["Unit"] = "n/a";
 

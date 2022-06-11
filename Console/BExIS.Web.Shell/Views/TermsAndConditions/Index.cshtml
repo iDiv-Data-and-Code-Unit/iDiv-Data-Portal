@@ -1,6 +1,155 @@
-﻿@using BExIS.Utils.WebHelpers
-@model string
+﻿@using Vaiona.Web.Mvc;
 
-@Html.RenderHtml(Model)
+@section Information
+{
+    Whit this Terms and conditions you was agree when you did your registration for the first time.
+}
+
+<style type="text/css">
+    .text h1 {
+        margin: 30px 0px 30px 0px;
+    }
+
+    div.text {
+        margin: 0px 5% 0px 5%;
+    }
+</style>
+<div class="text">
+    <h1>Data Sharing and Biodiversity Data Portal (iBDP) Usage Policy</h1>
+    <h2>FAQs- About Data Policy</h2>
+    <p>iDiv represents a large scale collaborative biodiversity science research effort whose central mission is to promote theory-driven synthesis and data-driven theory. It is widely agreed upon that data preservation and sharing is essential to further biodiversity research in general and to reach these aims in particular. To support this, many funding agencies – including DFG – have strong expectations with respect to data management and reuse.</p>
+
+    <p>Within iDiv, the Biodiversity Informatics Unit provides the iDiv Biodiversity Data Portal (iBDP), an infrastructure for data management including data storage, data preservation, data sharing and data reuse.</p>
+
+    <p>you create some data, you should keep the following questions in mind:</p>
+
+    <h3>Is the activity that produces the data paid for by iDiv?</h3>
+    <p>In this case, the data should be managed and shared via the iBDP. This is particularly important, if repeating the measurements would be impossible or very costly, e.g., if you have measured biomass on a certain plot on a certain date in June 2014, this might be valuable information for a PhD student in 2024 working on the same plot. Obviously, he can't just repeat your measurement to reproduce your data. If, for some reason, you prefer to store your data elsewhere (e.g., because there is a well-established archive in your field or the data is being produced in a collaborative project with its own data management), then the iBDP should contain at least sufficient information to discover and access this data. All this is true whether you create "classical" biodiversity data or other types of data – we assume that as long as you do it in the iDiv context, it will be relevant for biodiversity research.</p>
+
+    <h3>Is the activity that produces the data not paid for by iDiv?</h3>
+    <p>In this case, we still would like to see your data managed and shared via the iBDP, albeit this is not mandatory. Also, we will need to negotiate the conditions of iBDP usage (in particular associated cost) on a case to case basis.</p>
+
+    <h3>Is the data the result of an sDiv workshop?</h3>
+    <p>Again, we would be happy to see the data managed and shared via the iBDP. It might be a bit more difficult to figure out which access rights and licenses to use in this case to ensure that intellectual property rights of data owners are not violated. The BDU will be helping you with that.</p>
+
+    <h3>Who will be able to access the metadata?</h3>
+    <p>There are very good reasons to make metadata (= information describing the data) publicly available as soon as it is known (i.e., typically before data creation). This prevents duplicated effort and may result in additional collaboration opportunities. If this is not possible for some reason, at least access within iDiv should be provided. In exceptional cases, this access can be restricted.</p>
+
+    <h3>Who will be able to access the data?</h3>
+    <p>Ideally: Everyone. By default, in iBDP this will happen after a 2 year embargo period under a CC-BY-NC 2.0 license. The license means that the data can be used for non-commercial purposes but proper acknowledgments (to you) need to be provided. It is possible to extend the embargo period for additional 2 year increments. It is possible to select a different license or embargo period, if you have good reasons for doing so. The BDU will provide advice on these issues.</p>
+
+    <h3>What if someone wants to access embargoed data?</h3>
+    <p>Even if you don't want to share your data with just anyone from the start, it would be good to make it available within iDiv and maybe also to other people asking for it prior to the end of the embargo period. The iBDP will help you do that by providing means to ask for and grant data access and to negotiate the conditions under which data is released. The iBDP will give suggestions on such conditions. As a rule, data owners and other people involved in obtaining the data should be offered to collaborate on papers produced, if the data contributes significantly to the message of the paper and be cited and mentioned in the acknowledgements in all other cases.</p>
+
+    <h3>Are there specific rules for collaborative efforts?</h3>
+    <p>If you are taking part in a collaborative effort within iDiv or involving iDiv (like a new CRC or Research Group or just an informal agreement to collaborate on a certain topic), your group should prepare a data management plan prior to beginning your work. The BDU can provide guidance in setting up such plans.</p>
+
+    <h3>Why should I follow these policies?</h3>
+    <p>For iDiv's overall success, a culture of data sharing is essential. Thus, the directorate will enforce adherence to these policies. If you don't follow them, you may lose access rights to the iBDP, funds may be withheld or you may not be able to apply for resources from the flexible pool or sDiv.</p>
+
+    <p>If, on the other hand, you follow the policies, your data and metadata will be widely visible to the scientific community via the iBDP, you will get support from the BDU in all questions related to data management and you will meet the expectations with respect to data management of your funding agencies.</p>
+
+    <p>And now the more formal part: As an iDiv member or scientist, you need to agree to the rules outlined here.</p>
 
 
+
+    <h2>Data Sharing Policy</h2>
+    <ul style="list-style-type:decimal;">
+        <li>All data that has been produced with iDiv money (e.g., by the iDiv professors and their core staff, by scientists financed via the flexible pool or sDiv postdocs) and that is of potential future use has to be entered into the iBDP. "Potential future use" in particular is given, if the measurements are unrepeatable or cannot easily be repeated, e.g., field observations taken on a certain day. The data can either be stored in one of the databases underlying the iBDP or, if the data is stored elsewhere, the iBDP needs to contain sufficient information (metadata) to discover and access this data.</li>
+        <li>For all other data produced within the context of iDiv (e.g., in third-party funded projects of iDiv members), the iBDP offers to store the data or information about it. Usage of the iBDP in this case is strongly encouraged but not mandatory. The conditions of iBDP usage (in particular associated cost) will be negotiated on a case to case basis.</li>
+        <li>For data collected or aggregated at sDiv workshops, the iBDP offers storage. However, here, a careful consideration of intellectual property rights of the data owners needs to be made. Usage of the iBDP is strongly encouraged but not mandatory.  The BDU will provide guidance with respect to appropriate data sharing rules.</li>
+        <li>By default, metadata (= information describing the data) will be made publicly available via the iBDP as soon as it is known. If this is not possible, at least access within iDiv should be provided. In exceptional cases, e.g., if the metadata contains publishable results, this access can be restricted.</li>
+        <li>It is strongly encouraged to make data publically available as soon as possible. By default, in the iBDP this will happen after a 2 year embargo period starting from the end of data acquisition under a CC-BY-NC 2.0 license. It is possible to extend the embargo period for additional 2 year increments. Upon request, it is possible to select a different license or embargo period. In this case, the reasons for doing so must be provided to the BDU. The BDU will provide advice on these issues.</li>
+        <li>It is strongly encouraged to make data available within iDiv prior to the end of the embargo period. To support this data sharing, iBDP will provide means to ask for and grant data access and to negotiate the conditions under which data is released. As a rule, data owners and other people involved in obtaining the data should be invited to collaborate on manuscripts, if the data contributes significantly to the message of the planned paper and be cited and mentioned in the acknowledgements in all other cases. These mechanisms should be used by iBDP users outside of iDiv, too.</li>
+        <li>All collaborative efforts within iDiv or involving iDiv need to prepare a data management plan prior to their start. Such collaborative efforts include externally funded projects (like CRCs) but also informal agreements to collaborate on a certain topic and projects funded by sDiv or the flexible pool. The BDU will provide guidance in setting up such plans.</li>
+        <li>
+            Lack of adherence to the Data Sharing and iBDP Usage Policies as a data provider or a data user may result in loss of access rights to the iBDP, the withholding of funds or the refusal to allow applications for resources from iDiv.
+            If a provision of this agreement is or becomes illegal, invalid or unenforceable in any jurisdiction, that shall not affect:
+            <ul style="list-style-type:decimal;">
+                <li>validity or enforceability in that jurisdiction of any other provision of this agreement; or</li>
+                <li>The validity or enforceability in other jurisdictions of that or any other provision of this agreement.</li>
+            </ul>
+        </li>
+    </ul>
+
+
+    <h2>Biodiversity Data Portal (iBDP) Usage Policy</h2>
+    <p>The iDiv Biodiversity Data Portal (iBDP) is a platform for data management, storage and access provided by the Biodiversity Informatics Unit of iDiv. It allows for safekeeping and dissemination of iDiv data.</p>
+
+    <p>Anyone who wants to use the iBDP beyond searching for metadata needs to agree to these rules.</p>
+
+    <h3>Definitions</h3>
+
+    <p>In these rules the following terms are used:</p>
+    <ul>
+        <li>(Primary) Data- measurements, observations, model output, …</li>
+        <li>Metadata- descriptive information about detail or aggregate data sets, necessary  to interpret, use, and disclose data</li>
+        <li>iDiv member- as defined in the bylaws of iDiv (PIs + other scientists that were given membership)</li>
+        <li>iDiv scientist- any person (PI, Postdoc, PhD student, master or bachelor student working on their thesis, research assistants) working within iDiv.</li>
+        <li>iBDP user- any person using the iBDP.</li>
+        <li>Data Owner- The data owner is the university or research institution for which the data are collected. It is represented by the principal investigator (PI) of the project or part of the subproject he/she is responsible for. The data owner has to ensure that other people associated with the data (in particular data collectors) are appropriately considered and that their intellectual property rights are not violated. The PI can delegate the tasks associated with data ownership to other PIs or group members.</li>
+        <li>Data Collector- The person or persons responsible for collecting/creating the data.</li>
+        <li>Data Custodian- Person responsible for the provision of a specific set of data and metadata to iBDP. From the point of view of iDiv, this person represents all involved Data Owners and is responsible to ensure that intellectual property rights of data owners are not violated.</li>
+        <li>Data Provider- Person uploading data or metadata to the iBDP.</li>
+        <li>BDU- iDiv's Biodiversity Informatics Unit which provides the iBDP.</li>
+        <li>Data Manager- the Head of the Biodiversity Informatics Unit</li>
+    </ul>
+    <h3>Data management</h3>
+    <ul>
+        <li>The iBDP offers data storage and management as described in the iDiv data sharing rules. The following rules apply to all metadata and data made accessible via the iBDP.</li>
+    </ul>
+    <h3>Registration</h3>
+    <ul>
+        <li>Any person wishing to use the iBDP beyond the search for metadata needs to register with the system. Registration requires acceptance of the iBDP Usage Rules.</li>
+        <li>The Data Manager can withdraw access rights to the iBDP. This decision has to be confirmed by the iDiv Biodiversity Informatics Unit Board at its next meeting.</li>
+    </ul>
+    <h3>Data creation/contribution</h3>
+    <ul>
+        <li>Prior to uploading (meta)data to the iBDP the data custodian has to obtain permission from the data owners. The data custodian is required to ensure that data licenses are not violated. The data custodian can delegate these tasks to another person, the data provider. All data including metadata, supplementary information and quality indicators should be provided and uploaded using standards and open formats to the extent possible.</li>
+        <li>If data is uploaded in a proprietary format, information about the software needed to access it or preferably the software itself needs to be provided.</li>
+        <li>If data refers to research objects, e.g. specimens, soil samples, drilling cores, either the data or the metadata need to contain information on the location to these objects.</li>
+        <li>If data is deposited elsewhere, preferably in a well-established archive, metadata can (and in the case of iDiv financed data must) be made available via the iBDP. It should contain a link to the actual (primary) data.</li>
+    </ul>
+    <h3>Data quality</h3>
+    <ul>
+        <li>Quality control of data is primarily the duty of the data collectors and data custodians. The ultimate responsibility for data quality lies with the data owners.</li>
+        <li>The BDU will not change the original data record from a data provider, but may undertake conversions or transformations of the data structure or format to allow its inclusion in the iBDP. BDU will offer technical support for quality assurance.</li>
+    </ul>
+    <h3>(Meta) Data sharing and redistribution</h3>
+    <ul>
+        <li>By default, metadata provided to iBDP is publically available.
+        <li>In exceptional cases, it may be necessary to restrict metadata access to iDiv members or scientists or a restricted group of iBDP users or to a subset of the metadata. The reasons for doing so need to be submitted to the BDU in writing.</li>
+        <li>By default, data deposited in the iBDP shall be made publically available under a Creative Commons Attribution Non-Commercial License (CC-BY-NC 1.0)  unless legal issues or other concerns prevent this. To give the data owners and collectors time to perform their analysis, an embargo period of two years from the completion of data acquisition will be observed. During this time, the primary data will not be made publically available. This period can be extended once for another two years via a message to the data manager. The request for the extension should be formally made 3 months prior to the end of the embargo. Further extensions are possible but need to be justified in writing. Upon a written request to the BDU providing the reasons for doing so, a different license or embargo period can be chosen.</li>
+        <li><b>During the embargo period</b> the following rules apply:</li>
+        <li style="list-style-type:none;">
+            <ul style="list-style-type:decimal;">
+                <li><b>Data utilization request:</b> A person who would like to use data generated, collected and deposited by someone else, needs to send a formal written request to the data custodian that states the use/analysis intended with the data. The request must be copied to the data manager. The iBPD supports this communication.</li>
+                <li><b>Data usage</b> has to be carried out only after allowance from the data custodian.)</li>
+                <li>Data shared can only be used for the analysis indicated in the initial request. Any further analysis requires a new data request.</li>
+                <li>Data access is granted to individual persons. Data shared may not be given to third parties. This includes scientists even within the same working group. Every person needs their own account to the iBDP and needs to apply for their own permission for data usage.</li>
+            </ul>
+        </li>
+    </ul>
+    <h3>Data citation</h3>
+    <ul>
+        <li>In publications and other results obtained by using data accessed via iBDP, data sources have to be acknowledged by a citation.</li>
+        <li>Sample citations containing the required information will be provided upon data download.</li>
+    </ul>
+    <h3>Further Rules</h3>
+    <ul>
+        <li>The iDiv Biodiversity Informatics Unit Board decides in cases of disagreement.</li>
+        <li>In case of further disagreement, the iDiv board of directors decides.</li>
+        <li>A report about the metadata and data as well as data usage contained in the iBDP will be provided to DFG as part of the iDiv reports.</li>
+    </ul>
+    <h3>Limitation of liability</h3>
+    <ul>
+        <li>Each effort has been made by the BDU to ensure data quality. The BDU or any data owner or data custodian can neither be held liable for any error or omission in the datasets not for any direct, indirect or consequential damages arising from the use thereof. Users are requested to report any errors or deficiencies to the BDU.</li>
+        <li>If a provision of this agreement is or becomes illegal, invalid or unenforceable in any jurisdiction, that shall not affect:</li>
+        <li style="list-style-type:none;">
+            <ul style="list-style-type:decimal;">
+                <li>The validity or enforceability in that jurisdiction of any other provision of this agreement; or</li>
+                <li>The validity or enforceability in other jurisdictions of that or any other provision of this agreement.</li>
+            </ul>
+        </li>
+    </ul>
+</div>

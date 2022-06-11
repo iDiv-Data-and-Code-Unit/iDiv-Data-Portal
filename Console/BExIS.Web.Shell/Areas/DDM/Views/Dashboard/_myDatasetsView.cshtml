@@ -10,7 +10,7 @@
         <tr>
             <th title="Id">Id</th>
             <th title="Title">Title</th>
-            <th title="Description">Description</th>
+            <th title="Abstract">Abstract</th>
             <th title="is valid">Metadata <br />complete</th>
             <th title="Tabular">Tabular</th>
             <th title="d"></th>
@@ -35,7 +35,7 @@
                     <span class="bx fa-check"></span>
                 }            </td>
             <td class="dt-body-center">
-                <a class="bx bx-grid-function bx-show" href="/ddm/Data/Show/@m.Id" target="_blank" title="Show dataset"> </a>
+                <a class="bx bx-grid-function bx-show" href="/ddm/Data/Show/@m.Id" target="_blank" title="View details"> </a>
             </td>
         </tr>
         }
@@ -92,7 +92,7 @@
             var oTable = $("#resources_table").DataTable({
                 "autoWidth": false,
                 ordering: true,
-                //  order: [[6, "desc"]], // order by startDate
+                order: [[0, "desc"]], // order by Id
                 paging: false,
                 responsive: true,
 
@@ -103,11 +103,12 @@
                 },
 
 
-                columnDefs: [
+              /*  columnDefs: [
                     {
                         targets: 1,
                         render: $.fn.dataTable.render.ellipsis(60, true)
                     }]
+                    */
             });
 
 ;

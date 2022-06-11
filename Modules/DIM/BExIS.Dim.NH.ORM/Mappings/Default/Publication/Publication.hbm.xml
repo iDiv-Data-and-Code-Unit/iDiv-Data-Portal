@@ -17,10 +17,6 @@
 
     <!-- Mapping Publication properties -->
 
-    <property name="Doi" type="string">
-      <column name="Doi" />
-    </property>
-
     <property name="ResearchObjectId" type="Int64">
       <column name="ResearchObjectId" />
     </property>

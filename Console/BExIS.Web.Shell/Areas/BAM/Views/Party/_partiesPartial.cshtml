@@ -3,14 +3,14 @@
             .Name("partiesGrid").DataBinding(dataBinding => dataBinding
         .Ajax().OperationMode(GridOperationMode.Client))
             .Pageable(paging => paging.Enabled(true).PageSize(10).Position(GridPagerPosition.Both).PageTo(1))
-            .Sortable()
+            .Sortable(sorting => sorting.OrderBy(sortOrder => sortOrder.Add(c => c.Id).Descending()))
             .Filterable().ClientEvents(events =>
             {
                 events.OnDataBound("onDataBound");
             })
             .Columns(columns =>
             {
-               // columns.Bound(c => c.Id);
+                columns.Bound(c => c.Id);
                 columns.Bound(c => c.Name);
                 columns.Bound(c => c.PartyTypeTitle).Title("Type");
                 columns.Bound(c => c.StartDate).Format("{0:yyyy-MM-dd}").Title("Start date");
@@ -32,7 +32,7 @@
             }).Filterable()
       .Pageable(pageable =>
       {
-          pageable.PageSize(10, new[] { 10, 20, 50, 100 });
+          pageable.PageSize(100, new[] { 10, 20, 50, 100, 200, 500, 1000, 2000 });
           pageable.Style(GridPagerStyles.NextPreviousAndNumeric | GridPagerStyles.PageSizeDropDown);
           pageable.Position(GridPagerPosition.Bottom);
       })
