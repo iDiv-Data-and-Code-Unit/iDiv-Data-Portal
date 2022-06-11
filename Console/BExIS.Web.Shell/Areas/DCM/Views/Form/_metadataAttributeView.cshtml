@@ -319,26 +319,25 @@
                             {
                                 //@Html.TextBoxFor(m => m.Value, new {disabled = "disabled", Name = @displayName, Id = @idInput, PackageId = @Model.Parent.Id, Title = @errorMessage, @class = "bx-input bx-metadataFormTextInput " + @errorClass + " " + lockedClass})
 
-                <div class="bx-input bx-metadataFormTextInput  bx-disabled" style="padding-top: 4px;">
-                    @if (Model.Value != null)
-                    {
-                        if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
-                        {
-                            <a href="@Model.EntityUrl" target="_blank">@Model.Value</a>
-                        }
-                        else if (displayName == "Email")
-                        {
-                            string value = Model.Value.ToString();
-                            string[] email_parts = value.Split('@');
-                            value = String.Join("<span>werwe</span>", email_parts);
-                            @email_parts[0]<span>&#x40;</span><!--<span>werwe</span>-->@email_parts[1]
-                        }
-                        else
-                        {
-                            @Html.DisplayWithLinksFor(m => m.Value)
-                        }
-                    }
-                </div>
+                                <div class="bx-input bx-metadataFormTextInput  bx-disabled" style="padding-top: 4px;">
+                                    @if (Model.Value != null)
+                                    {
+                                        if (Model.EntityMappingExist && !string.IsNullOrEmpty(Model.EntityUrl))
+                                        {
+                                            <a href="@Model.EntityUrl" target="_blank">@Model.Value</a> 
+                                        }
+                                        else if (displayName == "Email")
+                                        {
+                                            string value = Model.Value.ToString();
+                                            string[] email_parts = value.Split('@');
+                                            value = String.Join("<span>werwe</span>", email_parts);
+                                            @email_parts[0]<span>&#x40;</span><!--<span>werwe</span>-->@email_parts[1] }
+                                        else
+                                        {
+                                            @Html.DisplayWithLinksFor(m => m.Value)
+                                        }
+                                    }
+                                </div>
 
                             }
 

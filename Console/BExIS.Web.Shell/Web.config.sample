@@ -69,12 +69,13 @@
     <!-- Allow to use the user email within the party person; change party email on changed user email -->
     <add key="usePersonEmailAttributeName" value="false" />
     <add key="PersonEmailAttributeName" value="Email" />
-    <add key="doiTestmode" value="false" />
-    <!-- <add key="doiToken" value="aZ0KRPR6GW" /> -->
-    <add key="doiToken" value="{DOI_TOKEN}" />
-    <add key="lucifron" value="{DOI_PROXY}" />
-    <add key="doiProvider" value="{DOI_PROVIDER}" />
-    <add key="doiPublisher" value="{DOI_PUBLISHER}" />
+    <add key="doiTestmode" value="false"/>
+	<add key="doiToken" value="{doi_token}"/>
+	<add key="lucifron" value="https://train.bexis2.uni-jena.de"/>
+	<add key="doiProvider" value="datacite"/>
+	<add key="doiPublisher" value="Publisher Name"/>
+
+	<add key="aspnet:MaxJsonDeserializerMembers" value="120000" />
   </appSettings>
   <system.web>
     <globalization uiCulture="en-US" culture="en-US" />
