@@ -12,6 +12,8 @@ using BExIS.Security.Services.Authorization;
 using BExIS.Security.Services.Objects;
 using BExIS.Security.Services.Utilities;
 using BExIS.Xml.Helpers;
+using Lucifron.ReST.Library.Models;
+using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;
 using System;
@@ -35,7 +37,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (PublicationManager publicationManager = new PublicationManager())
             {
 
-                Broker broker = publicationManager.RepositoryRepo.Get().Where(b => b.Name.ToLower().Equals(ConfigurationManager.AppSettings["doiProvider"].ToLower())).FirstOrDefault().Broker;
+                Broker broker = publicationManager.RepositoryRepo.Get().Where(b => b.Name.ToLower() == "datacite").FirstOrDefault().Broker;
                 List<Publication> publications = publicationManager.GetPublication().Where(p => p.Broker.Name.ToLower().Equals(broker.Name.ToLower())).ToList();
 
                 foreach (Publication p in publications)
@@ -58,72 +60,6 @@ namespace BExIS.Modules.Dim.UI.Controllers
             return View(model);
         }
 
-        public ActionResult Grant(long datasetVersionId)
-        {
-            using (DatasetManager datasetManager = new DatasetManager())
-            using (PublicationManager publicationManager = new PublicationManager())
-            using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
-            using (EntityManager entityManager = new EntityManager())
-            {
-                SettingsHelper settingsHelper = new SettingsHelper();
-                if (settingsHelper.KeyExist("doi_proxy") && settingsHelper.KeyExist("doi_token"))
-                {
-                    var mappings = settingsHelper.GetDataCiteMappings();
-                    DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
-
-                    var dataCiteHelper = new DataCiteDoiHelper();
-                    var model = dataCiteHelper.CreateDataCiteModel(datasetVersion, mappings);
-
-                    var client = new RestClient(settingsHelper.GetDataCiteProperty("proxy"));
-                    client.Authenticator = new JwtAuthenticator(settingsHelper.GetDataCiteProperty("token"));
-                }
-            }
-            throw new NotImplementedException();
-        }
-
-        public ActionResult Deny(long datasetVersionId)
-        {
-            using (DatasetManager datasetManager = new DatasetManager())
-            using (PublicationManager publicationManager = new PublicationManager())
-            {
-                DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
-
-                Publication publication = publicationManager.GetPublication().Where(p => p.DatasetVersion.Id.Equals(datasetVersion.Id)).FirstOrDefault();
-
-                publication.Status = "DOI Denied";
-
-                publication = publicationManager.UpdatePublication(publication);
-
-                EmailService es = new EmailService();
-                List<string> tmp = null;
-                string title = new XmlDatasetHelper().GetInformationFromVersion(datasetVersion.Id, NameAttributeValues.title);
-                string subject = "DOI Request for Dataset " + title + "(" + datasetVersion.Dataset.Id + ")";
-                string body = "<p>DOI reqested for dataset " + title + "(" + datasetVersion.Dataset.Id + "), was denied by the Datamanager.</p>";
-
-                tmp = new List<string>();
-                tmp = MappingUtils.GetValuesFromMetadata((int)Key.Email, LinkElementType.Key, datasetVersion.Dataset.MetadataStructure.Id, XmlUtility.ToXDocument(datasetVersion.Metadata));
-
-                foreach (string s in tmp)
-                {
-                    string e = s.Trim();
-                    es.Send(subject, body, e);
-                }
-
-                return PartialView("_requestRow", new PublicationModel()
-                {
-                    Broker = new BrokerModel(publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
-                    DataRepo = publication.Repository.Name,
-                    DatasetVersionId = publication.DatasetVersion.Id,
-                    CreationDate = publication.Timestamp,
-                    ExternalLink = publication.ExternalLink,
-                    FilePath = publication.FilePath,
-                    Status = publication.Status,
-                    DatasetId = publication.DatasetVersion.Dataset.Id,
-                    DatasetVersionNr = datasetManager.GetDatasetVersionNr(publication.DatasetVersion.Id)
-                });
-            }
-        }
-
         public ActionResult _grantDoi(long datasetVersionId)
         {
             using (DatasetManager datasetManager = new DatasetManager())
@@ -131,7 +67,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
             using (EntityPermissionManager entityPermissionManager = new EntityPermissionManager())
             using (EntityManager entityManager = new EntityManager())
             {
-
+                // dataset - version
                 DatasetVersion datasetVersion = datasetManager.GetDatasetVersion(datasetVersionId);
 
                 long versionNo = datasetManager.GetDatasetVersions(datasetVersion.Dataset.Id).OrderBy(d => d.Timestamp).Count();
@@ -144,13 +80,52 @@ namespace BExIS.Modules.Dim.UI.Controllers
 
 
                 SettingsHelper settingsHelper = new SettingsHelper();
-                if (settingsHelper.KeyExist("doi_proxy") && settingsHelper.KeyExist("doi_token"))
+                if (settingsHelper.KeyExist("proxy") && settingsHelper.KeyExist("token"))
                 {
-                    string doi = "ksods"; //new DataCiteDoiHelper();// settingsHelper.GetValue("doi_proxy"), settingsHelper.GetValue("doi_token")).issueDoi(latestDatasetVersion, datasetUrl, versionNo);
+                    // helper
+                    var datacitedoihelper = new DataCiteDoiHelper();
+
+                    var client = new RestClient(settingsHelper.GetValue("proxy"));
+                    client.Authenticator = new JwtAuthenticator(settingsHelper.GetValue("token"));
+
+                    // doi
+                    var placeholders = datacitedoihelper.CreatePlaceholders(datasetVersion, settingsHelper.GetDataCiteSettings("placeholders"));
+
+                    var doi_request = new RestRequest($"api/dois", Method.POST).AddJsonBody(placeholders);
+                    CreateDOIModel doi = JsonConvert.DeserializeObject<CreateDOIModel>(client.Execute(doi_request).Content);
+
+                    // Model
+                    var mappings = settingsHelper.GetDataCiteSettings("mappings");
+
+                    var model = datacitedoihelper.CreateDataCiteModel(datasetVersion, mappings);
+                    model.Doi = doi.DOI;
+                    model.Prefix = doi.Prefix;
+                    model.Suffix = doi.Suffix;
+
+                    var datacite_request = new RestRequest($"api/datacite", Method.POST).AddJsonBody(JsonConvert.SerializeObject(model));
+                    var response = client.Execute(datacite_request);
+
+                    if (response.StatusCode != System.Net.HttpStatusCode.Created)
+                    {
+                        return PartialView("_requestRow", new PublicationModel()
+                        {
+                            Broker = new BrokerModel(publication.Broker.Name, new List<string>() { publication.Repository.Name }, publication.Broker.Link),
+                            DataRepo = publication.Repository.Name,
+                            DatasetVersionId = publication.DatasetVersion.Id,
+                            CreationDate = publication.Timestamp,
+                            ExternalLink = publication.ExternalLink,
+                            FilePath = publication.FilePath,
+                            Status = publication.Status,
+                            DatasetId = publication.DatasetVersion.Dataset.Id,
+                            DatasetVersionNr = datasetManager.GetDatasetVersionNr(publication.DatasetVersion.Id)
+                        });
+                    }
+
+                    var response_content = JsonConvert.DeserializeObject<ReadDataCiteModel>(response.Content);
 
                     publication.DatasetVersion = latestDatasetVersion;
                     //  publication.Doi = doi;
-                    publication.ExternalLink = doi;
+                    publication.ExternalLink = response_content.Id;
                     publication.Status = "DOI Registered";
 
                     publication = publicationManager.UpdatePublication(publication);
@@ -160,7 +135,7 @@ namespace BExIS.Modules.Dim.UI.Controllers
                     string title = new XmlDatasetHelper().GetInformationFromVersion(latestDatasetVersion.Id, NameAttributeValues.title);
                     string subject = "DOI Request for Dataset " + title + "(" + latestDatasetVersion.Dataset.Id + ")";
                     string body = "<p>DOI reqested for dataset <a href=\"" + datasetUrl + "\">" + title + "(" + latestDatasetVersion.Dataset.Id + ")</a>, was granted by the Datamanager.</p>" +
-                        "<p>The doi is<a href=\"https://doi.org/" + doi + "\">" + doi + "</a></p>";
+                        "<p>The doi is<a href=\"https://doi.org/" + doi.DOI + "\">" + doi.DOI + "</a></p>";
 
                     tmp = new List<string>();
                     List<string> emails = new List<string>();

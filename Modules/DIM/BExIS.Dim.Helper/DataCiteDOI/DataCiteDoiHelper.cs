@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml;
-using System.Web.Mvc;
 using System.Configuration;
 using System.Threading;
 using BExIS.Security.Services.Utilities;
@@ -39,7 +38,7 @@ namespace BExIS.Dim.Helpers
             return 0;
         }
 
-        public CreateDataCiteModel CreateDataCiteModel(DatasetVersion datasetVersion, List<DataCiteMapping> mappings)
+        public CreateDataCiteModel CreateDataCiteModel(DatasetVersion datasetVersion, List<DataCiteSettingsItem> mappings)
         {
             var model = new CreateDataCiteModel();
 
@@ -60,11 +59,16 @@ namespace BExIS.Dim.Helpers
                         string fn = null;
                         string ln = null;
 
-                        mapping.PartyAttributes.TryGetValue("Firstname", out fn);
-                        mapping.PartyAttributes.TryGetValue("Lastname", out ln);
+                        if (mapping.Extra != null)
+                        {
+                            var partyAttributes = mapping.Extra.Split(';').Select(part => part.Split('=')).Where(part => part.Length == 2).ToDictionary(sp => sp[0], sp => sp[1]);
+
+                            partyAttributes.TryGetValue("Firstname", out fn);
+                            partyAttributes.TryGetValue("Lastname", out ln);
+                        }
 
                         var dataCiteCreatorsService = new DataCiteCreatorsService();
-                        model.Creators = dataCiteCreatorsService.GetCreators(datasetVersion, mapping.Value, mapping.UseParty, fn, ln);
+                        model.Creators = dataCiteCreatorsService.GetCreators(datasetVersion, mapping.Value, fn, ln);
 
                         break;
                     #endregion
@@ -118,14 +122,15 @@ namespace BExIS.Dim.Helpers
                     #region URL
                     case "URL":
 
-                        model.URL = "google.de";
+                        model.URL = $"{HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority)}/ddm/Data/ShowData/{datasetVersion.Dataset.Id}";
                         break;
                     #endregion
 
                     #region Version
                     case "Version":
 
-                        model.Version = datasetVersion.VersionName;
+                        var dataCiteVersionService = new DataCiteVersionService();
+                        model.Version = dataCiteVersionService.GetVersion(datasetVersion, mapping.Type, mapping.Value);
                         break;
                     #endregion
 
@@ -136,6 +141,47 @@ namespace BExIS.Dim.Helpers
             }
 
             return model;
+        }
+
+        public Dictionary<string, string> CreatePlaceholders(DatasetVersion datasetVersion, List<DataCiteSettingsItem> placeholders)
+        {
+            var _placeholders = new Dictionary<string, string>();
+
+            foreach (var placeholder in placeholders)
+            {
+                switch(placeholder.Name)
+                {
+                    case "DatasetId":
+
+                        _placeholders.Add("{DatasetId}", Convert.ToString(datasetVersion.Dataset.Id));
+                        break;
+
+                    case "VersionId":
+
+                        _placeholders.Add("{VersionId}", Convert.ToString(datasetVersion.Id));
+                        break;
+
+                    case "VersionName":
+
+                        _placeholders.Add("{VersionName}", datasetVersion.VersionName);
+                        break;
+
+                    case "VersionNumber":
+
+                        _placeholders.Add("{VersionNumber}", Convert.ToString(datasetVersion.VersionNo));
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            return _placeholders;
+        }
+
+        public string CreateDOI(Dictionary<string, string> placeholders)
+        {
+            return null;
         }
 
         private bool sendMetadata(DatasetVersion datasetVersion, string datasetUrl, long version, string doi)

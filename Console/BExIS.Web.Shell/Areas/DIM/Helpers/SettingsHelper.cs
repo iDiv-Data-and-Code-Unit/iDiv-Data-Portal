@@ -24,7 +24,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
         public bool KeyExist(string key)
         {
             XDocument settings = XDocument.Load(filePath);
-            XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key.ToLower(), settings);
+            XElement element = XmlUtility.GetXElementByAttribute("entry", "name", key.ToLower(), settings);
 
             return element != null ? true : false;
         }
@@ -32,7 +32,7 @@ namespace BExIS.Modules.Dim.UI.Helpers
         public string GetValue(string key)
         {
             XDocument settings = XDocument.Load(filePath);
-            XElement element = XmlUtility.GetXElementByAttribute("entry", "key", key.ToLower(), settings);
+            XElement element = XmlUtility.GetXElementByAttribute("entry", "name", key.ToLower(), settings);
 
             string value = "";
             value = element.Attribute("value")?.Value;
@@ -40,13 +40,13 @@ namespace BExIS.Modules.Dim.UI.Helpers
             return value;
         }
 
-        public List<DataCiteMapping> GetDataCiteMappings()
+        public List<DataCiteSettingsItem> GetDataCiteSettings(string name)
         {
             XDocument settings = XDocument.Load(filePath);
-            List<XElement> mappings = settings.Elements("mappings").ToList();
+            List<XElement> mappings = XmlUtility.GetXElementByNodeName(name, settings).Descendants().ToList();
 
             //return mappings.Select(m => new DataCiteMapping(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, m.Attribute("partyAttributes")?.Value.Split(';').Select(part => part.Split('=')).Where(part => part.Length == 2).ToDictionary(sp => sp[0], sp => sp[1]))).ToList();
-            return mappings.Select(m => new DataCiteMapping(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, Convert.ToBoolean(m.Attribute("useParty")?.Value), m.Attribute("partyAttributes")?.Value.Split(';').Select(part => part.Split('=')).Where(part => part.Length == 2).ToDictionary(sp => sp[0], sp => sp[1]))).ToList();
+            return mappings.Select(m => new DataCiteSettingsItem(m.Attribute("name")?.Value, m.Attribute("type")?.Value, m.Attribute("value")?.Value, m.Attribute("extra")?.Value)).ToList();
         }
 
         public string GetDataCiteProperty(string propertyName)
