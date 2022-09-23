@@ -47,17 +47,14 @@ SELECT 1, NULL, 'DIM', 'DataCiteDoi', '*', (Select id from features where name =
 WHERE NOT EXISTS (SELECT * FROM public.operations WHERE module='DIM' AND controller='DataCiteDoi');
 
 -- Add Entry for DOI as broker inside dim
-INSERT INTO public.dim_brokers(
-	versionno, extra, name, server, username, password, metadataformat, primarydataformat, link)
-	VALUES (1, null, 'DOI', '', '', '', '', '', '');
+	INSERT INTO public.dim_brokers(versionno, extra, name, server, username, password, metadataformat, primarydataformat, link)
+	SELECT 1, null, 'DOI', '', '', '', '', '', ''
+	WHERE NOT EXISTS (SELECT * FROM public.dim_brokers WHERE name='DOI');
 
 -- Add Entry for DataCite repository inside dim
-insert into public.dim_repositories(
-	versionno, extra, name, url, brokerref)
-select 
-    1, null, 'DataCite', '', id
-from public.dim_brokers where name = 'DOI';
-
+	insert into public.dim_repositories(versionno, extra, name, url, brokerref)
+	select 1, null, 'DataCite', '', (select id from public.dim_brokers where name='DOI')
+	WHERE NOT EXISTS (SELECT * FROM public.dim_repositories WHERE name='DataCite');
 
 -- Add Entry for FormerMembers
 INSERT INTO public.features(versionno, extra, description, name, parentref)
@@ -154,7 +151,7 @@ ALTER TABLE public.users_groups_formermember
     OWNER to postgres;
 
 -- Publication 
-ALTER TABLE public.dim_publications DROP COLUMN doi;
+ALTER TABLE public.dim_publications DROP COLUMN IF EXISTS doi ;
 
 
 -- Insert version
