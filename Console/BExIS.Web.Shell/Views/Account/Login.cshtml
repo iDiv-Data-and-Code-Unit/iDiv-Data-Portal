@@ -29,6 +29,7 @@
                     @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
                     @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
                 </div>
+            </div>
                 <div class="form-group">
                     @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
@@ -42,7 +43,6 @@
                         @Html.CheckBoxFor(m => m.RememberMe) Remember me
                     </div>
                 </div>
-            </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <p>@Html.ActionLink("Forgot your password?", "ForgotPassword")</p>
