@@ -16,10 +16,10 @@
     {
         <td></td>
     }
-<td>
+    <td>
 
-    @Html.ActionLink(@Model.DatasetId.ToString() + "(v" + @Model.DatasetVersionNr.ToString() + " " + @Model.DatasetVersionId.ToString() + ")", "Show", "Data", new { Area = "DDM", id = @Model.DatasetId, version = @Model.DatasetVersionNr }, null)
-</td>
+        @Html.ActionLink(@Model.DatasetId.ToString() + "(v" + @Model.DatasetVersionNr.ToString() + " " + @Model.DatasetVersionId.ToString() + ")", "Show", "Data", new { Area = "DDM", id = @Model.DatasetId, version = @Model.DatasetVersionNr }, null)
+    </td>
     </td>
     <td>@Model.CreationDate</td>
     <td>@Model.Status</td>
