@@ -243,6 +243,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                             if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                             {
                                 dataStructureType = DataStructureType.Structured.ToString();
+                                ViewData["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
                             }
                             else
                             {
@@ -373,6 +374,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     if (dsv.Dataset.DataStructure.Self.GetType().Equals(typeof(StructuredDataStructure)))
                     {
                         dataStructureType = DataStructureType.Structured.ToString();
+                        ViewData["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
                     }
                     else
                     {
@@ -427,9 +429,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
-                return this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format } });
+                var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format } });
 
-                //return RedirectToAction("GenerateZip", "Export", new RouteValueDictionary() { { "area", "DIM" }, { "id", id }, { "format", format } });
+                return actionresult;
             }
 
             return Json(false);
@@ -617,12 +619,12 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                                 ModelState.AddModelError(string.Empty, "The data is not available, please ask the administrator for a synchronization.");
                             }
 
-                            Session["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
+                            ViewData["gridTotal"] = dm.RowCount(dsv.Dataset.Id, null);
                         }
                         else
                         {
                             table = dm.GetDatasetVersionTuples(versionId, 0, 10);
-                            Session["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
+                            ViewData["gridTotal"] = dm.GetDatasetVersionEffectiveTuples(dsv).Count;
                         }
                         
                         sds.Variables = sds.Variables.OrderBy(v => v.OrderNo).ToList();
@@ -713,7 +715,7 @@ namespace BExIS.Modules.Ddm.UI.Controllers
                     }
 
                     model = new GridModel(table);
-                    model.Total = Convert.ToInt32(Session["gridTotal"]); // (int)Session["gridTotal"];
+                    model.Total = Convert.ToInt32(Session[versionId + "gridTotal"]); // (int)Session["gridTotal"];
                 }
                 else
                 {

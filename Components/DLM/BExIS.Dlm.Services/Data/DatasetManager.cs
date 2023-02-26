@@ -1178,13 +1178,25 @@ namespace BExIS.Dlm.Services.Data
                         );
                     return (q1.ToList());
                 }
-                // also works, but uses the time stamps instead of STATUS info
-                // var qu = (from dsv in DatasetVersionRepo.Get(p => datasetIds.Contains(p.Dataset.Id) && p.Dataset.Status != DatasetStatus.Deleted)
-                //           group dsv by dsv.Dataset.Id into grp
-                //           let maxTimestamp = grp.Max(p => p.Timestamp)
-                //           select grp.Single(p => p.Timestamp >= maxTimestamp));
+            }
+        }
 
-                //return (qu.ToList());
+        /// <summary>
+        /// Returns a list of the deleted latest versions of the provided <paramref name="datasetIds"/> including/ excluding the checked out versions.
+        /// </summary>
+        /// <param name="datasetIds">The list of identifiers of the datasets whose their latest versions is requested</param>
+        /// <returns>The list of the latest versions of the deleted datasets</returns>
+        public List<DatasetVersion> GetDeletedDatasetLatestVersions(List<Int64> datasetIds)
+        {
+            using (IUnitOfWork uow = this.GetUnitOfWork())
+            {
+                var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
+                var q1 = datasetVersionRepo.Query(p =>
+                        datasetIds.Contains(p.Dataset.Id)
+                        && (p.Dataset.Status == DatasetStatus.Deleted)
+                        && (p.Status == DatasetVersionStatus.CheckedIn)
+                    );
+                return (q1.ToList());
             }
         }
 
@@ -1863,6 +1875,9 @@ namespace BExIS.Dlm.Services.Data
         {
             using (IUnitOfWork uow = this.GetUnitOfWork())
             {
+
+                //StateInfo
+
                 var datasetRepo = uow.GetReadOnlyRepository<Dataset>();
                 var datasetVersionRepo = uow.GetReadOnlyRepository<DatasetVersion>();
 
@@ -2771,6 +2786,16 @@ namespace BExIS.Dlm.Services.Data
                             dsNewVersion.VersionType = previousCheckedInVersion.VersionType;
                             dsNewVersion.VersionName = previousCheckedInVersion.VersionName;
                             dsNewVersion.PublicAccess = previousCheckedInVersion.PublicAccess; //@Todo Copy or set to NULL?
+                            dsNewVersion.StateInfo = previousCheckedInVersion.StateInfo;
+
+                            // in state the status of the metadat is store
+                            // e.g. metadata is valid
+                            // this state need to copied to the new version
+                            if (dsNewVersion.StateInfo != null)
+                            {
+                                dsNewVersion.StateInfo.Comment = "";
+                                dsNewVersion.StateInfo.Timestamp = null;
+                            }
 
                             foreach (var item in previousCheckedInVersion.ContentDescriptors)
                             {
@@ -2828,7 +2853,7 @@ namespace BExIS.Dlm.Services.Data
                     dsv.Status = DatasetVersionStatus.CheckedIn;
 
                     ds.Status = DatasetStatus.CheckedIn;
-                    ds.LastCheckIOTimestamp = DateTime.UtcNow;
+                    ds.LastCheckIOTimestamp = DateTime.UtcNow; 
                     ds.CheckOutUser = string.Empty;
                     repo.Put(ds);
                     uow.Commit();

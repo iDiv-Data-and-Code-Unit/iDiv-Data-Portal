@@ -33,7 +33,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\BExIS.Modules.Dcm.UI.xml</DocumentationFile>
+    <DocumentationFile>bin\BExIS.Modules.Dcm.UI.xml </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -42,6 +42,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\BExIS.Modules.Dcm.UI.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -247,6 +248,8 @@
     <Compile Include="Models\Metadata\MetadataCompoundAttributeModel.cs" />
     <Compile Include="Models\Metadata\MetadataInstanceModel.cs" />
     <Compile Include="Models\Metadata\MetadataPackageModel.cs" />
+    <Compile Include="Models\Metadata\MetadataParameterModel.cs" />
+    <Compile Include="Models\Metadata\UIComponentModel.cs" />
     <Compile Include="Models\PrimaryKeyViewModel.cs" />
     <Compile Include="Models\Push\SendBigFilesToServerModel.cs" />
     <Compile Include="Models\SelectAreasModel.cs" />
@@ -484,6 +487,7 @@
     <None Include="Properties\PublishProfiles\BexisServer_master.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_dev.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_rc.pubxml" />
+    <None Include="Properties\PublishProfiles\BexisServer_train.pubxml" />
     <None Include="Scripts\jquery-3.6.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.6.0.js" />
     <Content Include="Scripts\jquery-3.6.0.min.js" />
@@ -582,6 +586,13 @@
     <None Include="Properties\PublishProfiles\BexisServer_demo.pubxml" />
     <None Include="Properties\PublishProfiles\BexisServer_test.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\Form\_metadataParameterView.cshtml" />
+    <Content Include="Views\Form\_integer.cshtml" />
+    <Content Include="Views\Form\_displayonly.cshtml" />
+    <Content Include="Views\Form\_bool.cshtml" />
+    <Content Include="Views\Form\_number.cshtml" />
+    <Content Include="Views\Form\_date.cshtml" />
+    <Content Include="Views\Form\_list.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -731,7 +742,8 @@
   </Target>
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)Console\Workspace\Modules\DCM"
-C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I</PostBuildEvent>
+C:\Windows\System32\xcopy "$(ProjectDir)Dcm.Settings.xml" "$(SolutionDir)Console\Workspace\Modules\DCM" /C /Y /I
+C:\Windows\System32\xcopy "$(ProjectDir)\bin\BExIS.Modules.Dcm.UI.xml" "$(SolutionDir)Console\BExIS.Web.Shell\App_Data" /C /Y /I</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\..\..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets" Condition="Exists('..\..\..\..\packages\PostSharp.4.3.48\tools\PostSharp.targets')" />
   <Target Name="EnsurePostSharpImported" BeforeTargets="BeforeBuild" Condition="'$(PostSharp30Imported)' == ''">
