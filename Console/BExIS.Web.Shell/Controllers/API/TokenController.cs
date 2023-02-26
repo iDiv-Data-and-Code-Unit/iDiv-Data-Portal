@@ -6,18 +6,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Description;
 
 namespace BExIS.Web.Shell.Controllers.API
 {
     public class TokenController : ApiController
     {
-
-        // GET api/Token/
-        /// <summary>
-        /// Get the token based on basic authentication
-        /// </summary>
-        /// <returns>Token</returns>
         [BExISApiAuthorize]
         [GetRoute("api/Token/")]
         [HttpGet]
@@ -39,12 +32,12 @@ namespace BExIS.Web.Shell.Controllers.API
                         return Request.CreateResponse(HttpStatusCode.OK, new { token = user.Token });
                     }
 
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Authentication failed");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
                 }
             }
             catch
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, "Authentication failed");
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
         }
     }

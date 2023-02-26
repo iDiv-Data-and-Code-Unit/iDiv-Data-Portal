@@ -427,9 +427,9 @@ namespace BExIS.Modules.Ddm.UI.Controllers
 
             if (this.IsAccessible("DIM", "Export", "GenerateZip"))
             {
-                var actionresult = this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format } });
+                return this.Run("DIM", "Export", "GenerateZip", new RouteValueDictionary() { { "id", id }, { "versionid", version }, { "format", format } });
 
-                return actionresult;
+                //return RedirectToAction("GenerateZip", "Export", new RouteValueDictionary() { { "area", "DIM" }, { "id", id }, { "format", format } });
             }
 
             return Json(false);

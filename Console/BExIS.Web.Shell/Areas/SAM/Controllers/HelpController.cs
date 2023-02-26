@@ -1,6 +1,4 @@
-﻿using BExIS.Utils.Helpers;
-using BExIS.Xml.Helpers;
-using System;
+﻿using BExIS.Xml.Helpers;
 using System.IO;
 using System.Web.Mvc;
 using System.Xml.Linq;
@@ -20,11 +18,6 @@ namespace BExIS.Modules.Sam.UI.Controllers
 
             string helpurl = help.Attribute("value")?.Value;
 
-            //add default link if not set
-            if (String.IsNullOrEmpty(helpurl))
-            {
-                helpurl = ManualHelper.GetUrl(AppConfiguration.ApplicationVersion, "SAM");
-            }
 
             return Redirect(helpurl);
 
